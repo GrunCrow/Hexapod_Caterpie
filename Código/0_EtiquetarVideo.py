@@ -5,20 +5,14 @@ import pandas as pd
 from constantes import *
 
 # Creamos una lista con las clases disponibles
-CLASSES = ['1_NanoBug_Azul', '2_NanoBug_Negro', '3_NanoBug_Celeste', '4_NanoBug_Blanco', '5_NanoBug_GrisClaro', '6_NanoBug_GrisOscuro', '7_NanoBug_Naranja']
-
-# Definimos ruta del Dataset
-DATASET_PATH = "../Dataset/"
+# CLASSES = ['1_NanoBug_Azul', '2_NanoBug_Negro', '3_NanoBug_Celeste', '4_NanoBug_Blanco', '5_NanoBug_GrisClaro', '6_NanoBug_GrisOscuro', '7_NanoBug_Naranja']
 
 # Definimos NanoBug a procesar
-NANOBUG_NAME = "1_NanoBug_Azul"
+NANOBUG_NAME = CLASSES[6]
 
 # Definimos la ruta del vídeo
-VIDEO_NAME = "WhatsApp Video 2023-04-11 at 12.28.09.mp4"
+VIDEO_NAME = "naranja.mp4"
 VIDEO_PATH = DATASET_PATH + NANOBUG_NAME + "/" + VIDEO_NAME
-
-# Definimos la ruta de la carpeta donde se guardarán las imágenes extraídas
-IMAGE_DIR = DATASET_PATH + "/imagenes/"
 
 # Definimos el nombre del archivo CSV donde se guardarán las etiquetas
 CSV_PATH = DATASET_PATH + "/CSVs/" + NANOBUG_NAME + ".csv"
