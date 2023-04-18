@@ -1,31 +1,13 @@
 # Border detector
 
-import RPi.GPIO as GPIO
 import time
 
-# Configurar los pines GPIO para el sensor de sonar
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(TRIGGER_PIN, GPIO.OUT)
-GPIO.setup(ECHO_PIN, GPIO.IN)
+from Code.Server import Ultrasonic
 
 
-def medir_distancia():
-    # Enviar un pulso al sensor de sonar
-    GPIO.output(TRIGGER_PIN, GPIO.HIGH)
-    time.sleep(0.00001)
-    GPIO.output(TRIGGER_PIN, GPIO.LOW)
+def medir_distancia(n_iteraciones=10):
+    Ultrasonic.Ultrasonic.getDistance(n_iteraciones=n_iteraciones)  # en cm
 
-    # Medir el tiempo que tarda el sonido en reflejarse
-    t_inicio = time.time()
-    while GPIO.input(ECHO_PIN) == GPIO.LOW:
-        t_inicio = time.time()
-    t_fin = time.time()
-    while GPIO.input(ECHO_PIN) == GPIO.HIGH:
-        t_fin = time.time()
-
-    # Calcular la distancia en centímetros
-    duracion = t_fin - t_inicio
-    distancia = duracion * 34300 / 2
     return distancia
 
 
@@ -43,8 +25,6 @@ def medir_distancia():
     else:
         # Mantener la posición actual de las patas
         angulo_patas = 90 + inclinacion_cabeza'''
-
-
 
 while True:
     distancia = medir_distancia()
