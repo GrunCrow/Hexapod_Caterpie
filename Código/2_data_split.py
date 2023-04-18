@@ -1,14 +1,27 @@
-from keras.models import Sequential
-from keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout
-from keras.optimizers import Adam
-from keras.preprocessing.image import ImageDataGenerator
+import pandas as pd
+from sklearn.model_selection import train_test_split # para crear la división estratificada
 
-# Directorios con las imágenes de entrenamiento, validación y prueba
-train_dir = 'ruta/del/directorio/de/entrenamiento'
-val_dir = 'ruta/del/directorio/de/validacion'
-test_dir = 'ruta/del/directorio/de/prueba'
+from constantes import *
 
-# Generador de imágenes de entrenamiento y validación con aumento de datos
+'''
+Cargar el CSV con las imágenes y etiquetas.
+'''
+
+# Cargamos el CSV con las etiquetas
+df = pd.read_csv(CSV_HEXBUG_NANO)
+
+# Dividimos los datos en entrenamiento y prueba (80-20%)
+train, test = train_test_split(df, test_size=0.1, random_state=42, stratify=df['class'])
+
+# Dividimos los datos de entrenamiento en entrenamiento y validación (75-25%)
+train, val = train_test_split(train, test_size=0.1, random_state=42, stratify=train['class'])
+
+# Guardamos los conjuntos de datos en CSVs separados
+train.to_csv(CSV_PATH + 'HexBug_Nano_train.csv', index=False)
+test.to_csv(CSV_PATH + 'HexBug_Nano_test.csv', index=False)
+val.to_csv(CSV_PATH + 'HexBug_Nano_val.csv', index=False)
+
+'''# Generador de imágenes de entrenamiento y validación con aumento de datos
 train_datagen = ImageDataGenerator(rescale=1./255,
                                    rotation_range=40,
                                    width_shift_range=0.2,
@@ -63,4 +76,4 @@ test_generator = test_datagen.flow_from_directory(test_dir,
                                                   batch_size=32,
                                                   class_mode='categorical')
 test_loss, test_acc = model.evaluate_generator(test_generator, steps=test_generator.samples//test_generator.batch_size)
-print('Test accuracy:', test_acc)
+print('Test accuracy:', test_acc)'''

@@ -25,4 +25,8 @@ CLASSES = ['1_NanoBug_Azul',
 DATASET_PATH = "../Dataset/"
 
 # Definimos la ruta de la carpeta donde se guardarán las imágenes extraídas
-IMAGE_DIR = DATASET_PATH + "/imagenes/"
+IMAGE_DIR = DATASET_PATH + "imagenes/"
+
+CSV_PATH = DATASET_PATH + "CSVs/"
+
+CSV_HEXBUG_NANO = CSV_PATH + "HexBug_Nano.CSV"
