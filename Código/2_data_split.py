@@ -17,9 +17,9 @@ train, test = train_test_split(df, test_size=0.1, random_state=42, stratify=df['
 train, val = train_test_split(train, test_size=0.1, random_state=42, stratify=train['class'])
 
 # Guardamos los conjuntos de datos en CSVs separados
-train.to_csv(CSV_PATH + 'HexBug_Nano_train.csv', index=False)
-test.to_csv(CSV_PATH + 'HexBug_Nano_test.csv', index=False)
-val.to_csv(CSV_PATH + 'HexBug_Nano_val.csv', index=False)
+train.to_csv(CSV_TRAIN_HEXBUG_NANO, index=False)
+test.to_csv(CSV_TEST_HEXBUG_NANO, index=False)
+val.to_csv(CSV_VALIDATION_HEXBUG_NANO, index=False)
 
 '''# Generador de imágenes de entrenamiento y validación con aumento de datos
 train_datagen = ImageDataGenerator(rescale=1./255,
@@ -37,6 +37,7 @@ train_generator = train_datagen.flow_from_directory(train_dir,
                                                     target_size=(224, 224),
                                                     batch_size=32,
                                                     class_mode='categorical')
+                                                    
 val_generator = val_datagen.flow_from_directory(val_dir,
                                                 target_size=(224, 224),
                                                 batch_size=32,

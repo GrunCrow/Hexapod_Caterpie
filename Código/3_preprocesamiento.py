@@ -1,4 +1,8 @@
 import pandas as pd
+import cv2
+import numpy as np
+import os
+
 from sklearn.model_selection import train_test_split # para crear la división estratificada
 
 from keras.models import Sequential
@@ -23,11 +27,6 @@ Evaluar el desempeño de la red neuronal en los datos de prueba.
 
 Guardar la red neuronal entrenada para su uso futuro.
 '''
-
-import cv2
-import numpy as np
-import pandas as pd
-import os
 
 # Definimos la ruta del directorio donde se encuentran las imágenes
 IMAGE_DIR = "../Dataset/imagenes/"
@@ -55,7 +54,7 @@ def preprocess_image(image_path):
     return resized
 
 # Cargamos el CSV de train
-train_df = pd.read_csv("../Dataset/CSVs/HexBug_Nano_train.csv")
+train_df = pd.read_csv(CSV_TRAIN_HEXBUG_NANO)
 
 # Preprocesamos las imágenes de train y las guardamos en el directorio correspondiente
 for index, row in train_df.iterrows():
@@ -65,7 +64,7 @@ for index, row in train_df.iterrows():
     cv2.imwrite(preprocessed_image_path, preprocessed_image)
 
 # Cargamos el CSV de test
-test_df = pd.read_csv("../Dataset/CSVs/HexBug_Nano_test.csv")
+test_df = pd.read_csv(CSV_TEST_HEXBUG_NANO)
 
 # Preprocesamos las imágenes de test y las guardamos en el directorio correspondiente
 for index, row in test_df.iterrows():
@@ -75,7 +74,7 @@ for index, row in test_df.iterrows():
     cv2.imwrite(preprocessed_image_path, preprocessed_image)
 
 # Cargamos el CSV de validation
-val_df = pd.read_csv("../Dataset/CSVs/HexBug_Nano_val.csv")
+val_df = pd.read_csv(CSV_VALIDATION_HEXBUG_NANO)
 
 # Preprocesamos las imágenes de validation y las guardamos en el directorio correspondiente
 for index, row in val_df.iterrows():
