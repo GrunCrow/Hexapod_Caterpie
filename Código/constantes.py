@@ -36,3 +36,5 @@ CSV_TEST_HEXBUG_NANO = CSV_PATH + "HexBug_Nano_test.CSV"
 CSV_VALIDATION_HEXBUG_NANO = CSV_PATH + "HexBug_Nano_validation.CSV"
 
 
+# ================================== NEURAL NETWORK  ==================================
+BATCH_SIZE = 8

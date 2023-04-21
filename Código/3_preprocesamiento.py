@@ -1,86 +1,56 @@
-import cv2
+import numpy as np
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
 import pandas as pd
-from sklearn.model_selection import train_test_split # para crear la división estratificada
-
-from keras.models import Sequential
-from keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout
-from keras.optimizers import Adam
-from keras.preprocessing.image import ImageDataGenerator
+from sklearn.model_selection import train_test_split
 
 from constantes import *
 
-from IPython.display import Image
 
-'''
-Preprocesar las imágenes para que tengan un tamaño fijo y normalizarlas. -- HACERLO EN MEMORIA
+# Cargar los datos
+data = pd.read_csv(CSV_PATH + "HexBug_Nano_all.csv")
 
-Definir la arquitectura de la red neuronal, por ejemplo, una red convolucional.
+# Dividir los datos en train, test y validation sets de forma estratificada y aleatoria
+train, test = train_test_split(data, test_size=0.2, stratify=data['class'])
+train, val = train_test_split(train, test_size=0.25, stratify=train['class'])
 
-Compilar la red neuronal, seleccionando una función de pérdida, un optimizador y una métrica para evaluar el desempeño de la red.
+# Creamos un generador de imágenes para el preprocesamiento
+datagen = ImageDataGenerator(rescale=1./255)
 
-Entrenar la red neuronal en los datos de entrenamiento, utilizando la función de pérdida y el optimizador seleccionados, y evaluando el desempeño en los datos de validación.
+# Cargamos las imágenes de entrenamiento con el generador de imágenes y aplicamos el preprocesamiento
+train_generator = datagen.flow_from_dataframe(
+        dataframe=train,
+        directory=IMAGE_DIR,
+        x_col="filename",
+        y_col="class",
+        target_size=(TARGET_HEIGHT_IMG, TARGET_WIDTH_IMG),
+        batch_size=BATCH_SIZE,
+        class_mode='categorical')
 
-Ajustar los hiperparámetros de la red neuronal, como el número de capas, el tamaño del kernel, el tamaño del lote, etc.
+# Cargamos las imágenes de validación con el generador de imágenes y aplicamos el preprocesamiento
+val_generator = datagen.flow_from_dataframe(
+        dataframe=val,
+        directory=IMAGE_DIR,
+        x_col="filename",
+        y_col="class",
+        target_size=(TARGET_HEIGHT_IMG, TARGET_WIDTH_IMG),
+        batch_size=BATCH_SIZE,
+        class_mode='categorical')
 
-Evaluar el desempeño de la red neuronal en los datos de prueba.
+# Cargamos las imágenes de test con el generador de imágenes y aplicamos el preprocesamiento
+test_generator = datagen.flow_from_dataframe(
+        dataframe=test,
+        directory=IMAGE_DIR,
+        x_col="filename",
+        y_col="class",
+        target_size=(TARGET_HEIGHT_IMG, TARGET_WIDTH_IMG),
+        batch_size=BATCH_SIZE,
+        class_mode='categorical')
 
-Guardar la red neuronal entrenada para su uso futuro.
-'''
+# Obtenemos el número de clases
+num_classes = len(CLASSES)
 
-import numpy as np
-import os
-
-# Definimos la ruta del directorio donde se encuentran las imágenes
-IMAGE_DIR = "../Dataset/imagenes/"
-
-# Definimos la ruta donde se guardarán las imágenes preprocesadas
-PREPROCESSED_DIR = "../Dataset/preprocessed_images/"
-
-# Creamos el directorio si no existe
-if not os.path.exists(PREPROCESSED_DIR):
-    os.makedirs(PREPROCESSED_DIR)
-
-# Definimos la función para preprocesar las imágenes
-def preprocess_image(image_path):
-    # Cargamos la imagen
-    image = cv2.imread(image_path)
-    # Convertimos la imagen a escala de grises
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    # Aplicamos un filtro gaussiano para suavizar la imagen y reducir el ruido
-    blur = cv2.GaussianBlur(gray, (5, 5), 0)
-    # Aplicamos la técnica de umbralización adaptativa para binarizar la imagen
-    thresh = cv2.adaptiveThreshold(blur, 255, cv2.ADAPTIVE_THRESH_MEAN_C, cv2.THRESH_BINARY_INV, 11, 2)
-    # Cambiamos el tamaño de la imagen a 128x128 píxeles
-    resized = cv2.resize(thresh, (128, 128), interpolation=cv2.INTER_AREA)
-    # Devolvemos la imagen preprocesada
-    return resized
-
-# Cargamos el CSV de train
-train_df = pd.read_csv("../Dataset/CSVs/HexBug_Nano_train.csv")
-
-# Preprocesamos las imágenes de train y las guardamos en el directorio correspondiente
-for index, row in train_df.iterrows():
-    image_path = os.path.join(row['path'])
-    preprocessed_image = preprocess_image(image_path)
-    preprocessed_image_path = os.path.join(PREPROCESSED_DIR, row['path'])
-    cv2.imwrite(preprocessed_image_path, preprocessed_image)
-
-# Cargamos el CSV de test
-test_df = pd.read_csv("../Dataset/CSVs/HexBug_Nano_test.csv")
-
-# Preprocesamos las imágenes de test y las guardamos en el directorio correspondiente
-for index, row in test_df.iterrows():
-    image_path = os.path.join(row['path'])
-    preprocessed_image = preprocess_image(image_path)
-    preprocessed_image_path = os.path.join(PREPROCESSED_DIR, row['path'])
-    cv2.imwrite(preprocessed_image_path, preprocessed_image)
-
-# Cargamos el CSV de validation
-val_df = pd.read_csv("../Dataset/CSVs/HexBug_Nano_val.csv")
-
-# Preprocesamos las imágenes de validation y las guardamos en el directorio correspondiente
-for index, row in val_df.iterrows():
-    image_path = os.path.join(row['path'])
-    preprocessed_image = preprocess_image(image_path)
-    preprocessed_image_path = os.path.join(PREPROCESSED_DIR, row['path'])
-    cv2.imwrite(preprocessed_image_path, preprocessed_image)
+# Imprimimos información de las imágenes cargadas
+print("Número de imágenes de entrenamiento:", len(train_generator.filenames))
+print("Número de imágenes de validación:", len(val_generator.filenames))
+print("Número de imágenes de test:", len(test_generator.filenames))
+print("Número de clases:", num_classes)
