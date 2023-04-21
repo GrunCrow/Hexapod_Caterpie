@@ -1,5 +1,7 @@
 import numpy as np
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
+import tensorflow as tf
+from tensorflow import keras
+from keras.preprocessing.image import ImageDataGenerator
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
@@ -7,11 +9,9 @@ from constantes import *
 
 
 # Cargar los datos
-data = pd.read_csv(CSV_PATH + "HexBug_Nano_all.csv")
-
-# Dividir los datos en train, test y validation sets de forma estratificada y aleatoria
-train, test = train_test_split(data, test_size=0.2, stratify=data['class'])
-train, val = train_test_split(train, test_size=0.25, stratify=train['class'])
+train = pd.read_csv(CSV_PATH + "HexBug_Nano_train.csv")
+val = pd.read_csv(CSV_PATH + "HexBug_Nano_val.csv")
+test = pd.read_csv(CSV_PATH + "HexBug_Nano_test.csv")
 
 # Creamos un generador de imágenes para el preprocesamiento
 datagen = ImageDataGenerator(rescale=1./255)
@@ -19,7 +19,6 @@ datagen = ImageDataGenerator(rescale=1./255)
 # Cargamos las imágenes de entrenamiento con el generador de imágenes y aplicamos el preprocesamiento
 train_generator = datagen.flow_from_dataframe(
         dataframe=train,
-        directory=IMAGE_DIR,
         x_col="filename",
         y_col="class",
         target_size=(TARGET_HEIGHT_IMG, TARGET_WIDTH_IMG),
@@ -29,7 +28,6 @@ train_generator = datagen.flow_from_dataframe(
 # Cargamos las imágenes de validación con el generador de imágenes y aplicamos el preprocesamiento
 val_generator = datagen.flow_from_dataframe(
         dataframe=val,
-        directory=IMAGE_DIR,
         x_col="filename",
         y_col="class",
         target_size=(TARGET_HEIGHT_IMG, TARGET_WIDTH_IMG),
@@ -39,7 +37,6 @@ val_generator = datagen.flow_from_dataframe(
 # Cargamos las imágenes de test con el generador de imágenes y aplicamos el preprocesamiento
 test_generator = datagen.flow_from_dataframe(
         dataframe=test,
-        directory=IMAGE_DIR,
         x_col="filename",
         y_col="class",
         target_size=(TARGET_HEIGHT_IMG, TARGET_WIDTH_IMG),
