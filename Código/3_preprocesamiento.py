@@ -19,7 +19,7 @@ datagen = ImageDataGenerator(rescale=1./255)
 # Cargamos las imágenes de entrenamiento con el generador de imágenes y aplicamos el preprocesamiento
 train_generator = datagen.flow_from_dataframe(
         dataframe=train,
-        x_col="filename",
+        x_col="path",
         y_col="class",
         target_size=(TARGET_HEIGHT_IMG, TARGET_WIDTH_IMG),
         batch_size=BATCH_SIZE,
@@ -28,7 +28,7 @@ train_generator = datagen.flow_from_dataframe(
 # Cargamos las imágenes de validación con el generador de imágenes y aplicamos el preprocesamiento
 val_generator = datagen.flow_from_dataframe(
         dataframe=val,
-        x_col="filename",
+        x_col="path",
         y_col="class",
         target_size=(TARGET_HEIGHT_IMG, TARGET_WIDTH_IMG),
         batch_size=BATCH_SIZE,
@@ -37,7 +37,7 @@ val_generator = datagen.flow_from_dataframe(
 # Cargamos las imágenes de test con el generador de imágenes y aplicamos el preprocesamiento
 test_generator = datagen.flow_from_dataframe(
         dataframe=test,
-        x_col="filename",
+        x_col="path",
         y_col="class",
         target_size=(TARGET_HEIGHT_IMG, TARGET_WIDTH_IMG),
         batch_size=BATCH_SIZE,
@@ -51,3 +51,5 @@ print("Número de imágenes de entrenamiento:", len(train_generator.filenames))
 print("Número de imágenes de validación:", len(val_generator.filenames))
 print("Número de imágenes de test:", len(test_generator.filenames))
 print("Número de clases:", num_classes)
+
+
