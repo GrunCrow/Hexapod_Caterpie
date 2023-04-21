@@ -46,7 +46,7 @@ while cap.isOpened():
     frame = cv2.resize(frame, (TARGET_WIDTH_IMG, TARGET_HEIGHT_IMG))
 
     # Dibujamos el cuadro con el nombre del archivo y el número de cuadro
-    cv2.putText(frame, "{}_{}".format(file_name, count), (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
+    # cv2.putText(frame, "{}_{}".format(file_name, count), (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
 
     # Guardamos la imagen y añadimos la etiqueta a la lista de etiquetas
     '''image_name = "{}_{}.jpg".format(file_name, count)

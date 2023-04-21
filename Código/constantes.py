@@ -19,6 +19,7 @@ CLASSES = ['1_NanoBug_Azul',
            '6_NanoBug_GrisOscuro',
            '7_NanoBug_Naranja']
 
+CLASS_NUMBER = len(CLASSES)
 
 # ===================================================== PATHS =====================================================
 # Definimos ruta del Dataset
@@ -31,9 +32,9 @@ CSV_PATH = DATASET_PATH + "CSVs/"
 
 CSV_HEXBUG_NANO = CSV_PATH + "HexBug_Nano.CSV"
 
-CSV_TRAIN_HEXBUG_NANO = CSV_PATH + "HexBug_Nano_train.CSV"
-CSV_TEST_HEXBUG_NANO = CSV_PATH + "HexBug_Nano_test.CSV"
-CSV_VALIDATION_HEXBUG_NANO = CSV_PATH + "HexBug_Nano_validation.CSV"
+CSV_TRAIN_HEXBUG_NANO = CSV_PATH + "HexBug_Nano_train.csv"
+CSV_TEST_HEXBUG_NANO = CSV_PATH + "HexBug_Nano_test.csv"
+CSV_VALIDATION_HEXBUG_NANO = CSV_PATH + "HexBug_Nano_validation.csv"
 
 
 # ================================== NEURAL NETWORK  ==================================
