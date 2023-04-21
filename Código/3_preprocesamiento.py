@@ -12,7 +12,7 @@ from constantes import *
 from IPython.display import Image
 
 '''
-Preprocesar las imágenes para que tengan un tamaño fijo y normalizarlas.
+Preprocesar las imágenes para que tengan un tamaño fijo y normalizarlas. -- HACERLO EN MEMORIA
 
 Definir la arquitectura de la red neuronal, por ejemplo, una red convolucional.
 
