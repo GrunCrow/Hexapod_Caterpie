@@ -25,16 +25,15 @@ class Ultrasonic:
         pulseTime = (time.time() - t0)*1000000
         return pulseTime
         
-    def getDistance(self, n_iteraciones=10):
-        distance_cm = [0] * n_iteraciones
-        for i in range(n_iteraciones):
+    def getDistance(self):
+        distance_cm=[0,0,0]
+        for i in range(3):
             self.send_trigger_pulse()
-            pingTime = self.pulseIn(self.echo_pin, GPIO.HIGH, 300*60)
-            distance_cm[i] = pingTime * 340.0 / 2.0 / 10000.0
+            pingTime = self.pulseIn(self.echo_pin,GPIO.HIGH,300*60)
+            distance_cm[i] = pingTime * 340.0 / 2.0 /10000.0
         distance_cm=sorted(distance_cm)
-        return int(distance_cm[int(n_iteraciones/2)])
-
-
+        return int(distance_cm[1])
+        
 # Main program logic follows:
 if __name__ == '__main__':
     pass
