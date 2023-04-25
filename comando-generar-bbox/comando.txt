@@ -1,0 +1,1 @@
+python yolov5-master/detect.py --source C:\Users\usuario\Desktop\Hexapod_Caterpie\Dataset\imagenes\1_NanoBug_Azul_17.jpg --hide-labels --nosave --save-txt
