@@ -17,11 +17,14 @@ import statistics
 
 legs = ["one", "two", "three", "four", "five", "six"]
 
-n_iteraciones = 20
-umbral_de_distancia = 150
-posicion_inicial_cabeza = 75
+n_iteraciones = 5
+umbral_de_distancia = 200
+posicion_inicial_cabeza = 70
 maximo_cabeza = 69
 
+velocidad_atras = 5
+velocidad_giro = 4
+velocidad_recto = 3
 
 def comprobar_cabeza(posicion_cabeza):
     return posicion_cabeza <= maximo_cabeza
@@ -37,7 +40,7 @@ def receive_instruction(client, ip):
         client.tcp_flag = False
 
 
-def calibrar(c):
+def calibrar(c,data):
     for i in range(len(legs)):
         command = cmd.CMD_CALIBRATION + '#' + legs[i] + '#' + str(data[i][0]) + '#' + str(data[i][1]) + '#' + str(
             str(data[i][2])) + '\n'
@@ -47,7 +50,6 @@ def calibrar(c):
 def getDistance(distancias):
     distance_cm = sorted(distancias)
     return int(distance_cm[int(len(distancias) / 2)])
-
 
 if __name__ == "__main__":
 
@@ -61,6 +63,7 @@ if __name__ == "__main__":
     c.turn_on_client("192.168.50.100")
     c.tcp_flag = True
     receive_instruction(c, "192.168.50.100")
+    calibrar(c,data)
 
     """
     AYUDA MOVIMIENTO
@@ -71,14 +74,13 @@ if __name__ == "__main__":
     c.send_data(command)
     """
 
-    distancias = np.array([])
+
 
     command = cmd.CMD_BUZZER + '#1' + '\n'
     c.send_data(command)
     time.sleep(1)
     command = cmd.CMD_BUZZER + '#0' + '\n'
     c.send_data(command)
-
     command = cmd.CMD_SERVOPOWER + "#" + "1" + '\n'
     c.send_data(command)
     time.sleep(2)
@@ -94,9 +96,8 @@ if __name__ == "__main__":
         '''
                             LEER SONAR
         '''
+        distancias = []
         for i in range(n_iteraciones):
-            distancias = []
-
             # Comando Leer Sonar (único comando)
             command = cmd.CMD_SONIC + '\n'
             c.send_data(command)
@@ -135,8 +136,8 @@ if __name__ == "__main__":
 
                 # Si el comando es CMD_SONIC -> Mostrar distancia detectada
                 elif data[0] == cmd.CMD_SONIC:
-                    print('Obstacle:' + str(data[1]) + 'cm')
-                    distancias.append(int(data[1]))
+                    # print('Obstacle:' + str(data[1]) + 'cm')
+                    distancias=np.append(distancias,int(data[1]))
 
                 # Si el comando es CMD_POWER -> muestra la batería
                 elif data[0] == cmd.CMD_POWER:
@@ -152,27 +153,32 @@ if __name__ == "__main__":
                         print(e)
 
             # Si la mediana es superior al umbral -> GIRAR
-            print(distancias)
-            print("Mediana de las distancias = ", statistics.median(distancias))
-            if int(statistics.median(distancias)) >= umbral_de_distancia:
-                # Va para atrás
-                command = cmd.CMD_MOVE + '#1#0#-10#10#0' + '\n'
-                c.send_data(command)
-                time.sleep(3)
-                # Gira
-                for j in range(5):
-                    command = cmd.CMD_MOVE + '#1#0#0#6#10' + '\n'
+            if len(distancias) == n_iteraciones:
+                if int(statistics.mode(distancias)) >= umbral_de_distancia:
+                    print(distancias)
+                    print("Mediana de las distancias = ", statistics.mode(distancias))
+                    # Va para atrás
+                    print("Voy para atrás")
+                    command = cmd.CMD_MOVE + '#1#0#-10#' + str(velocidad_atras) + '#0' + '\n'
                     c.send_data(command)
                     time.sleep(3)
-            # Si no, sigue caminando recto
-            else:
-                command = cmd.CMD_MOVE + '#1#0#35#2#0' + '\n'
-                c.send_data(command)
-                time.sleep(3)
+                    # Gira
+                    for j in range(5):
+                        print("Giro!")
+                        command = cmd.CMD_MOVE + '#1#0#0#' + str(velocidad_giro) + '#10' + '\n'
+                        c.send_data(command)
+                        time.sleep(3)
+                    # Si no, sigue caminando recto
+                else:
+                    print("Camino recto")
+                    command = cmd.CMD_MOVE + '#1#0#35#' + str(velocidad_recto) + '#0' + '\n'
+                    c.send_data(command)
+                    time.sleep(3)
             # FIN DEL BUCLE DE N_ITERACIONES
 
-            if keyboard.is_pressed("r"):
-                command = cmd.CMD_MOVE + '#0#0#0#0#0' + '\n'
-                c.send_data(command)
-                time.sleep(3)
-                break
+        if keyboard.is_pressed("r"):
+            command = cmd.CMD_MOVE + '#0#0#0#0#0' + '\n'
+            c.send_data(command)
+            time.sleep(3)
+            break
+
