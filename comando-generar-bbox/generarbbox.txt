@@ -1,0 +1,1 @@
+for /f %f in ('dir /b c:\') do echo %f
