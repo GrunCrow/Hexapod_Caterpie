@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
+import pytorch
 import os
 url_img = 'C:/Users/usuario/Desktop/Hexapod_Caterpie/Dataset/imagenes/1_NanoBug_Azul_17.jpg'
 image = cv2.imread('C:/Users/usuario/Desktop/Hexapod_Caterpie/Dataset/imagenes/1_NanoBug_Azul_17.jpg')
@@ -18,6 +19,16 @@ def generarpuntos():
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
-for url_img in os.listdir('C:/Users/usuario/Desktop/Hexapod_Caterpie/Dataset/imagenes'):
-    print(url_img)
-    os.system(f'python detect.py --source {f"C:/Users/usuario/Desktop/Hexapod_Caterpie/Dataset/imagenes/{url_img}"} --nosave --exist-ok --hide-labels --save-txt')
+def train():
+    # os.system(f"python train.py --img 640 --epochs 3 --data data/data.yaml --weights yolov5s.pt")
+    os.system("python train.py --img 640 --batch 16 --epochs 3 --data data.yaml --weights yolov5s.pt --cache")
+
+def test():
+    for url_img in os.listdir('C:/Users/usuario/Desktop/Hexapod_Caterpie/Dataset/imagenes'):
+        print(url_img)
+        os.system(f'python detect.py --source {f"C:/Users/usuario/Desktop/Hexapod_Caterpie/Dataset/imagenes/{url_img}"} --data data.yaml --exist-ok --save-txt')
+
+if __name__ == "__main__":
+    os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
+    # train()
+    test()
