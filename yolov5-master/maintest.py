@@ -1,10 +1,12 @@
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
-import pytorch
+import torch
+from torchvision import datasets, transforms
+
 import os
-url_img = 'C:/Users/usuario/Desktop/Hexapod_Caterpie/Dataset/imagenes/1_NanoBug_Azul_17.jpg'
-image = cv2.imread('C:/Users/usuario/Desktop/Hexapod_Caterpie/Dataset/imagenes/1_NanoBug_Azul_17.jpg')
+url_img = 'C:/Users/usuario/Desktop/Hexapod_Caterpie/Dataset/imagenes/1_NanoBug_Azul/1_NanoBug_Azul_17.jpg'
+image = cv2.imread('C:/Users/usuario/Desktop/Hexapod_Caterpie/Dataset/imagenes/1_NanoBug_Azul/1_NanoBug_Azul_17.jpg')
 
 height = image.shape[0]
 width = image.shape[1]
@@ -31,4 +33,16 @@ def test():
 if __name__ == "__main__":
     os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
     # train()
-    model = torch.hub.load('ultralytics/yolov5', 'custom', path='path/to/best.pt')  # local model
+    model = torch.hub.load('ultralytics/yolov5', 'custom', path='runs/train/exp8/weights/best.pt')  # local model
+    dataset = datasets.ImageFolder('../Dataset/imagenes')
+    dataloader = torch.utils.data.DataLoader(dataset, batch_size=32, shuffle=True)
+    print(dataloader)
+    # Looping through it, get a batch on each loop
+    for images, labels in dataloader:
+        pass
+
+    # Get one batch
+    images, labels = next(iter(dataloader))
+    print(images)
+    plt.imshow(images[0], normalize=False)
+    # model()
