@@ -31,4 +31,4 @@ def test():
 if __name__ == "__main__":
     os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
     # train()
-    test()
+    model = torch.hub.load('ultralytics/yolov5', 'custom', path='path/to/best.pt')  # local model
