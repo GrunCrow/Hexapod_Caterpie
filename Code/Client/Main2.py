@@ -89,13 +89,14 @@ if __name__ == "__main__":
     time.sleep(2)
 
     # Inclinar la cabeza a la posición inicial
-    command = cmd.CMD_HEAD + '#0#' + str(posicion_inicial_cabeza) + '\n'
+
+    '''command = cmd.CMD_HEAD + '#0#' + str(posicion_inicial_cabeza) + '\n'
     c.send_data(command)
-    time.sleep(2)
-    while True:
-        '''
-                            LEER SONAR
-        '''
+    time.sleep(2)'''
+
+    '''while True:
+                            #LEER SONAR
+
         distancias = []
         for i in range(n_iteraciones):
             # Comando Leer Sonar (único comando)
@@ -180,5 +181,24 @@ if __name__ == "__main__":
             command = cmd.CMD_MOVE + '#0#0#0#0#0' + '\n'
             c.send_data(command)
             time.sleep(3)
-            break
+            break'''
+
+    for i in range(3):
+        command = cmd.CMD_MOVE + '#1#0#35#10#0' + '\n'
+        c.send_data(command)
+        time.sleep(5)
+
+    for i in range(3):
+        command = cmd.CMD_MOVE + '#1#35#0#10#0' + '\n'
+        c.send_data(command)
+        time.sleep(5)
+
+    for i in range(3):
+        command = cmd.CMD_MOVE + '#2#0#-35#10#10' + '\n'
+        c.send_data(command)
+        time.sleep(5)
+    for i in range(3):
+        command = cmd.CMD_MOVE + '#2#35#0#10#10' + '\n'
+        c.send_data(command)
+        time.sleep(5)
 
