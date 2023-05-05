@@ -1,7 +1,9 @@
+from PIL import Image
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 import torch
+import torchvision.datasets
 from torchvision import datasets, transforms
 
 import os
@@ -36,13 +38,17 @@ if __name__ == "__main__":
     model = torch.hub.load('ultralytics/yolov5', 'custom', path='runs/train/exp8/weights/best.pt')  # local model
     dataset = datasets.ImageFolder('../Dataset/imagenes')
     dataloader = torch.utils.data.DataLoader(dataset, batch_size=32, shuffle=True)
-    print(dataloader)
-    # Looping through it, get a batch on each loop
-    for images, labels in dataloader:
-        pass
+    data = torchvision.datasets.ImageFolder('../Dataset/imagenes')
+    print(data)
+    # # Looping through it, get a batch on each loop
+    # for images, labels in dataloader:
+    #     pass
+    #
+    # # Get one batch
+    # images, labels = next(iter(dataloader))
+    images = list(image[0] for image in dataset)
+    output = model(images)
+    print(output)
+    # Not Enough Memory
 
-    # Get one batch
-    images, labels = next(iter(dataloader))
-    print(images)
-    plt.imshow(images[0], normalize=False)
-    # model()
+    # # model()
