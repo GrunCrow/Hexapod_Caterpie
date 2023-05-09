@@ -20,6 +20,19 @@ def bytes_to_image(image_data):
     image = Image.open(image_file)
     return image
 
+def draw_red_square(image):
+    height, width, _ = image.shape
+    center_x, center_y = width // 2, height // 2
+    square_size = 20  # Tamaño del cuadrado en píxeles
+    half_size = square_size // 2
+    top_left = (center_x - half_size, center_y - half_size)
+    bottom_right = (center_x + half_size, center_y + half_size)
+    color = (0, 0, 255)  # Color en formato BGR (rojo)
+    thickness = 2  # Grosor del cuadrado
+    image_with_square = cv2.rectangle(image, top_left, bottom_right, color, thickness)
+    return image_with_square
+
+
 class Client:
     def __init__(self):
         self.face=Face()
@@ -79,6 +92,7 @@ class Client:
                         if self.fece_id == False and self.fece_recognition_flag:
                             self.face.face_detect(self.image)
                         #self.video_flag=False
+                        self.image=draw_red_square(self.image)
                         cv2.imshow('VideoHexapod2',self.image)
 
             except BaseException as e:
