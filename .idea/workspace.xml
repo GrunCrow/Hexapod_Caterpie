@@ -47,7 +47,7 @@
       <recent name="C:\Users\usuario\Desktop\Hexapod_Caterpie\Dataset\1_NanoBug_Azul" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.test">
+  <component name="RunManager" selected="Python.maintest">
     <configuration name="maintest" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Hexapod_Caterpie" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -113,8 +113,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.test" />
         <item itemvalue="Python.maintest" />
+        <item itemvalue="Python.test" />
         <item itemvalue="Python.move_files" />
       </list>
     </recent_temporary>

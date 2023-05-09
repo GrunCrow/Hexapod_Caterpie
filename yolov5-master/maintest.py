@@ -30,30 +30,31 @@ def train():
 def test():
     for url_img in os.listdir('C:/Users/usuario/Desktop/Hexapod_Caterpie/Dataset/imagenes'):
         print(url_img)
-        os.system(f'python detect.py --source {f"C:/Users/usuario/Desktop/Hexapod_Caterpie/Dataset/imagenes/{url_img}"} --data data.yaml --exist-ok --save-txt')
+        os.system(f'python detect.py --weights ./runs/train/exp8/weights/best.pt --source {f"C:/Users/usuario/Desktop/Hexapod_Caterpie/Dataset/imagenes/{url_img}"} --data data.yaml --exist-ok --save-txt')
 
 if __name__ == "__main__":
-    os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
-    # train()
-    model = torch.hub.load('ultralytics/yolov5', 'custom', path='runs/train/exp8/weights/best.pt')  # local model
-    dataset = datasets.ImageFolder('../Dataset/imagenes')
-    dataloader = torch.utils.data.DataLoader(dataset, batch_size=1, shuffle=True)
-    data = torchvision.datasets.ImageFolder('../Dataset/imagenes')
-    print(data)
-    # # Looping through it, get a batch on each loop
-    # for images, labels in dataloader:
-    #     pass
-    #
-    # # Get one batch
-    # images, labels = next(iter(dataloader))
+    # os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
+    # # train()
+    # model = torch.hub.load('ultralytics/yolov5', 'custom', path='runs/train/exp8/weights/best.pt')  # local model
+    # dataset = datasets.ImageFolder('../Dataset/imagenes')
+    # dataloader = torch.utils.data.DataLoader(dataset, batch_size=1, shuffle=True)
+    # data = torchvision.datasets.ImageFolder('../Dataset/imagenes')
+    # print(data)
+    # # # Looping through it, get a batch on each loop
+    # # for images, labels in dataloader:
+    # #     pass
+    # #
+    # # # Get one batch
+    # # images, labels = next(iter(dataloader))
+    # # images = list(image[0] for image in dataset)
     # images = list(image[0] for image in dataset)
-    images = list(image[0] for image in dataset)
-    img = images[374]
-    img.save("test1.png")
-    img = images[375]
-    img.save("test2.png")
-    output = model(images[374:376])
-    print(output)
-    # Not Enough Memory
+    # img = images[374]
+    # img.save("test1.png")
+    # img = images[375]
+    # img.save("test2.png")
+    # output = model(images[374:376])
+    # print(output)
+    # # Not Enough Memory
+    test()
 
     # # model()
