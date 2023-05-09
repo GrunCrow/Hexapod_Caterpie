@@ -79,8 +79,7 @@ class Client:
                         if self.fece_id == False and self.fece_recognition_flag:
                             self.face.face_detect(self.image)
                         #self.video_flag=False
-                        cv2.imshow('Video',self.image)
-
+                        cv2.imshow('VideoHexapod2',self.image)
 
             except BaseException as e:
                 print (e)

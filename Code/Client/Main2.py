@@ -15,6 +15,7 @@ import keyboard
 import numpy as np
 import statistics
 
+
 legs = ["one", "two", "three", "four", "five", "six"]
 
 n_iteraciones = 5
@@ -22,8 +23,8 @@ umbral_de_distancia = 200
 posicion_inicial_cabeza = 50
 maximo_cabeza = 50
 
-velocidad_atras = 6
-velocidad_giro = 5
+velocidad_atras = 8
+velocidad_giro = 8
 velocidad_recto = 8
 
 
@@ -31,14 +32,6 @@ def comprobar_cabeza(posicion_cabeza):
     return posicion_cabeza <= maximo_cabeza
 
 
-def receive_instruction(client, ip):
-    try:
-        client.client_socket1.connect((ip, 5002))
-        client.tcp_flag = True
-        print("Connecttion Successful !")
-    except Exception as e:
-        print("Connect to server Faild!: Server IP is right? Server is opend?")
-        client.tcp_flag = False
 
 
 def calibrar(c, data):
@@ -61,6 +54,12 @@ def stop_robot():
     return stop
 
 
+'''def tomarFoto(c):
+    cv2.cvtColor(self.face_image, cv2.COLOR_BGR2RGB, self.face_image)
+    cv2.imwrite('Face/' + str(len(self.client.face.name)) + '.jpg', self.face_image)'''
+
+
+
 if __name__ == "__main__":
 
     fichero = open("point.txt")
@@ -72,10 +71,9 @@ if __name__ == "__main__":
     c = Client()
     c.turn_on_client("192.168.50.100")
     c.tcp_flag = True
-    receive_instruction(c, "192.168.50.100")
+    c.receive_instruction("192.168.50.100")
     calibrar(c, data)
-    videoThread = threading.Thread(target=c.receiving_video, args=("192.168.50.100",))
-    videoThread.start()
+    c.receiving_video("192.168.50.100")
 
     """
     AYUDA MOVIMIENTO
@@ -86,7 +84,7 @@ if __name__ == "__main__":
     c.send_data(command)
     """
 
-    command = cmd.CMD_BUZZER + '#1' + '\n'
+    '''command = cmd.CMD_BUZZER + '#1' + '\n'
     c.send_data(command)
     time.sleep(1)
     command = cmd.CMD_BUZZER + '#0' + '\n'
@@ -96,7 +94,7 @@ if __name__ == "__main__":
     time.sleep(2)
     command = cmd.CMD_BALANCE + '#1' + '\n'
     c.send_data(command)
-    time.sleep(2)
+    time.sleep(2)'''
 
     # Inclinar la cabeza a la posición inicial
 
@@ -165,7 +163,7 @@ if __name__ == "__main__":
                         print(e)
 
             # Si la mediana es superior al umbral -> GIRAR
-            if len(distancias) == n_iteraciones:
+            '''if len(distancias) == n_iteraciones:
                 valor_distancia = int(statistics.mode(distancias))
                 print("Mediana de las distancias = ", valor_distancia)
                 if valor_distancia >= umbral_de_distancia:
@@ -185,7 +183,7 @@ if __name__ == "__main__":
                     print("Camino recto")
                     command = cmd.CMD_MOVE + '#1#0#35#' + str(velocidad_recto) + '#0' + '\n'
                     c.send_data(command)
-                    time.sleep(3)
+                    time.sleep(3)'''
             # FIN DEL BUCLE DE N_ITERACIONES
 
         stop = stop_robot()
@@ -209,5 +207,3 @@ if __name__ == "__main__":
     time.sleep(1)
     c.turn_off_client()
     print("Conexion Finalizada")
-
-
