@@ -17,7 +17,7 @@ width = image.shape[1]
 def generarpuntos():
     for i in [0.132716, -0.132716]:
         for j in [0.131687, -0.131687]:
-            image = cv2.circle(image, (int((0.399691+i)*width), int((0.55144+j)*height)), 2, (0,255,255), 2)
+            image = cv2.circle(image, (int((0.399691+i)*width), int((0.55144+j)*height)), 2, (0, 255, 255), 2)
 
     cv2.imshow("Image", image)
     cv2.waitKey(0)
@@ -37,7 +37,7 @@ if __name__ == "__main__":
     # train()
     model = torch.hub.load('ultralytics/yolov5', 'custom', path='runs/train/exp8/weights/best.pt')  # local model
     dataset = datasets.ImageFolder('../Dataset/imagenes')
-    dataloader = torch.utils.data.DataLoader(dataset, batch_size=32, shuffle=True)
+    dataloader = torch.utils.data.DataLoader(dataset, batch_size=1, shuffle=True)
     data = torchvision.datasets.ImageFolder('../Dataset/imagenes')
     print(data)
     # # Looping through it, get a batch on each loop
@@ -46,8 +46,13 @@ if __name__ == "__main__":
     #
     # # Get one batch
     # images, labels = next(iter(dataloader))
+    # images = list(image[0] for image in dataset)
     images = list(image[0] for image in dataset)
-    output = model(images)
+    img = images[374]
+    img.save("test1.png")
+    img = images[375]
+    img.save("test2.png")
+    output = model(images[374:376])
     print(output)
     # Not Enough Memory
 
