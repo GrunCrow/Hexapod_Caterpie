@@ -15,32 +15,26 @@ import keyboard
 import numpy as np
 import statistics
 
+
 legs = ["one", "two", "three", "four", "five", "six"]
 
 n_iteraciones = 5
 umbral_de_distancia = 200
-posicion_inicial_cabeza = 70
-maximo_cabeza = 69
+posicion_inicial_cabeza = 50
+maximo_cabeza = 50
 
-velocidad_atras = 5
-velocidad_giro = 4
-velocidad_recto = 3
+velocidad_atras = 8
+velocidad_giro = 8
+velocidad_recto = 8
+
 
 def comprobar_cabeza(posicion_cabeza):
     return posicion_cabeza <= maximo_cabeza
 
 
-def receive_instruction(client, ip):
-    try:
-        client.client_socket1.connect((ip, 5002))
-        client.tcp_flag = True
-        print("Connecttion Successful !")
-    except Exception as e:
-        print("Connect to server Faild!: Server IP is right? Server is opend?")
-        client.tcp_flag = False
 
 
-def calibrar(c,data):
+def calibrar(c, data):
     for i in range(len(legs)):
         command = cmd.CMD_CALIBRATION + '#' + legs[i] + '#' + str(data[i][0]) + '#' + str(data[i][1]) + '#' + str(
             str(data[i][2])) + '\n'
@@ -50,6 +44,21 @@ def calibrar(c,data):
 def getDistance(distancias):
     distance_cm = sorted(distancias)
     return int(distance_cm[int(len(distancias) / 2)])
+
+
+def stop_robot():
+    stop = False
+    if keyboard.is_pressed("r"):
+        stop = True
+
+    return stop
+
+
+'''def tomarFoto(c):
+    cv2.cvtColor(self.face_image, cv2.COLOR_BGR2RGB, self.face_image)
+    cv2.imwrite('Face/' + str(len(self.client.face.name)) + '.jpg', self.face_image)'''
+
+
 
 if __name__ == "__main__":
 
@@ -62,8 +71,9 @@ if __name__ == "__main__":
     c = Client()
     c.turn_on_client("192.168.50.100")
     c.tcp_flag = True
-    receive_instruction(c, "192.168.50.100")
-    calibrar(c,data)
+    c.receive_instruction("192.168.50.100")
+    calibrar(c, data)
+    c.receiving_video("192.168.50.100")
 
     """
     AYUDA MOVIMIENTO
@@ -74,9 +84,7 @@ if __name__ == "__main__":
     c.send_data(command)
     """
 
-
-
-    command = cmd.CMD_BUZZER + '#1' + '\n'
+    '''command = cmd.CMD_BUZZER + '#1' + '\n'
     c.send_data(command)
     time.sleep(1)
     command = cmd.CMD_BUZZER + '#0' + '\n'
@@ -86,16 +94,17 @@ if __name__ == "__main__":
     time.sleep(2)
     command = cmd.CMD_BALANCE + '#1' + '\n'
     c.send_data(command)
-    time.sleep(2)
+    time.sleep(2)'''
 
     # Inclinar la cabeza a la posición inicial
 
-    '''command = cmd.CMD_HEAD + '#0#' + str(posicion_inicial_cabeza) + '\n'
+    command = cmd.CMD_HEAD + '#0#' + str(posicion_inicial_cabeza) + '\n'
     c.send_data(command)
-    time.sleep(2)'''
+    time.sleep(2)
+    stop = False
 
-    '''while True:
-                            #LEER SONAR
+    while not stop:
+        # LEER SONAR
 
         distancias = []
         for i in range(n_iteraciones):
@@ -138,7 +147,7 @@ if __name__ == "__main__":
                 # Si el comando es CMD_SONIC -> Mostrar distancia detectada
                 elif data[0] == cmd.CMD_SONIC:
                     # print('Obstacle:' + str(data[1]) + 'cm')
-                    distancias=np.append(distancias,int(data[1]))
+                    distancias = np.append(distancias, int(data[1]))
 
                 # Si el comando es CMD_POWER -> muestra la batería
                 elif data[0] == cmd.CMD_POWER:
@@ -154,10 +163,10 @@ if __name__ == "__main__":
                         print(e)
 
             # Si la mediana es superior al umbral -> GIRAR
-            if len(distancias) == n_iteraciones:
-                if int(statistics.mode(distancias)) >= umbral_de_distancia:
-                    print(distancias)
-                    print("Mediana de las distancias = ", statistics.mode(distancias))
+            '''if len(distancias) == n_iteraciones:
+                valor_distancia = int(statistics.mode(distancias))
+                print("Mediana de las distancias = ", valor_distancia)
+                if valor_distancia >= umbral_de_distancia:
                     # Va para atrás
                     print("Voy para atrás")
                     command = cmd.CMD_MOVE + '#1#0#-10#' + str(velocidad_atras) + '#0' + '\n'
@@ -174,31 +183,27 @@ if __name__ == "__main__":
                     print("Camino recto")
                     command = cmd.CMD_MOVE + '#1#0#35#' + str(velocidad_recto) + '#0' + '\n'
                     c.send_data(command)
-                    time.sleep(3)
+                    time.sleep(3)'''
             # FIN DEL BUCLE DE N_ITERACIONES
 
-        if keyboard.is_pressed("r"):
+        stop = stop_robot()
+
+        '''if keyboard.is_pressed("r"):
             command = cmd.CMD_MOVE + '#0#0#0#0#0' + '\n'
             c.send_data(command)
             time.sleep(3)
+            c.turn_off_client()
             break'''
+    '''if c.video_flag == False:
+        height, width, bytesPerComponent = c.image.shape
+        # print (height, width, bytesPerComponent)
+        cv2.cvtColor(c.image, cv2.COLOR_BGR2RGB, c.image)
+        QImg = QImage(c.image.data.tobytes(), width, height, 3 * width, QImage.Format_RGB888)
+        c.video_flag = True'''
 
-    for i in range(3):
-        command = cmd.CMD_MOVE + '#1#0#35#10#0' + '\n'
-        c.send_data(command)
-        time.sleep(5)
-
-    for i in range(3):
-        command = cmd.CMD_MOVE + '#1#35#0#10#0' + '\n'
-        c.send_data(command)
-        time.sleep(5)
-
-    for i in range(3):
-        command = cmd.CMD_MOVE + '#2#0#-35#10#10' + '\n'
-        c.send_data(command)
-        time.sleep(5)
-    for i in range(3):
-        command = cmd.CMD_MOVE + '#2#35#0#10#10' + '\n'
-        c.send_data(command)
-        time.sleep(5)
-
+    print("Finalizando conexion + \n")
+    command = cmd.CMD_MOVE + '#0#0#0#0#0' + '\n'
+    c.send_data(command)
+    time.sleep(1)
+    c.turn_off_client()
+    print("Conexion Finalizada")
