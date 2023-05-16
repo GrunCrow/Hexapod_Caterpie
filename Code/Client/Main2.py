@@ -17,14 +17,23 @@ import statistics
 
 legs = ["one", "two", "three", "four", "five", "six"]
 
-n_iteraciones = 5
-umbral_de_distancia = 120
+n_iteraciones = 10
+umbral_de_distancia = 100
 posicion_inicial_cabeza = 50
+posicion_inicial_cabeza_lateral = 90
+giro_cabeza_lateral = 40
 maximo_cabeza = 50
 
 velocidad_atras = 8
 velocidad_giro = 8
-velocidad_recto = 8
+velocidad_recto = 3
+
+# Flag de movimiento
+movimiento = True
+
+# Flag de cabeza girada
+F_Girado = False
+n_iteraciones_cabeza = 5
 
 
 def comprobar_cabeza(posicion_cabeza):
@@ -59,6 +68,19 @@ def stop_robot():
         stop = True
 
     return stop
+
+
+def moveHead_Horizontal(angle):
+    # angle = str(180-self.slider_head_1.value())
+    command = cmd.CMD_HEAD + "#" + "1" + "#" + str(angle) + '\n'
+
+    return command
+
+def moveHead_initialPosition():
+    return cmd.CMD_HEAD + '#0#' + str(posicion_inicial_cabeza) + '\n' + cmd.CMD_HEAD + "#" + "1" + "#" + str(posicion_inicial_cabeza_lateral) + '\n'
+
+def moveHead_initialPosition_lateral():
+    return cmd.CMD_HEAD + "#" + "1" + "#" + str(posicion_inicial_cabeza_lateral) + '\n'
 
 
 if __name__ == "__main__":
@@ -100,93 +122,143 @@ if __name__ == "__main__":
 
     # Inclinar la cabeza a la posición inicial
 
-    command = cmd.CMD_HEAD + '#0#' + str(posicion_inicial_cabeza) + '\n'
+    # command = cmd.CMD_HEAD + '#0#' + str(posicion_inicial_cabeza) + '\n'
+    command = moveHead_initialPosition()
     c.send_data(command)
     time.sleep(2)
     stop = False
 
     while not stop:
         # LEER SONAR
-
         distancias = []
+        distancias_derecha = []
+        distancias_izquierda = []
+
+        if F_Girado:
+            # Girar la cabeza a la izquierda, 3 del sonar, girar cabeza a la derecha, 3 del sonar si en alguno la distancia por debajo del umbral -> girar
+            # print("Girando mi cabeza a la izquierda")
+            girar_izquierda = moveHead_Horizontal(posicion_inicial_cabeza_lateral-giro_cabeza_lateral)
+            c.send_data(girar_izquierda)
+            for _ in range(n_iteraciones_cabeza):
+                command = cmd.CMD_SONIC + '\n'
+                c.send_data(command)
+
+            # Volver a la posicion inicial
+            command = moveHead_initialPosition()
+            c.send_data(command)
+
+            # Giro a la derecha
+            # print("Girando mi cabeza a la derecha")
+            girar_derecha = moveHead_Horizontal(posicion_inicial_cabeza_lateral+giro_cabeza_lateral)
+            c.send_data(girar_derecha)
+            for _ in range(n_iteraciones_cabeza):
+                command = cmd.CMD_SONIC + '\n'
+                c.send_data(command)
+
+        # Comando Leer Sonar n_veces
         for i in range(n_iteraciones):
-            # Comando Leer Sonar (único comando)
             command = cmd.CMD_SONIC + '\n'
             c.send_data(command)
-            time.sleep(0.5)
+            # time.sleep(0.5)
 
-            # Intenta recibir los datos
-            try:
-                alldata = c.receive_data()
-            except:
+        # Intenta recibir los datos
+        try:
+            alldata = c.receive_data()
+        except:
+            c.tcp_flag = False
+            break
+        # print(alldata)
+
+        # Si no recibe nada
+        if alldata == '':
+            break
+        # Si recibe está separado por saltos de linea, hacer array en el que cada elemento sea el dato
+        else:
+            cmdArray = alldata.split('\n')
+            # print(cmdArray)
+            if cmdArray[-1] != "":
+                cmdArray == cmdArray[:-1]
+
+        # Numero de comandos
+        # print(len(cmdArray))
+
+        # Por cada comando del CMDArray
+        for oneCmd in cmdArray:
+            data = oneCmd.split("#")
+            # print(data)
+
+            # Si Comando vacío
+            if data == "":
                 c.tcp_flag = False
                 break
-            # print(alldata)
 
-            # Si no recibe nada
-            if alldata == '':
-                break
-            # Si recibe está separado por saltos de linea, hacer array en el que cada elemento sea el dato
-            else:
-                cmdArray = alldata.split('\n')
-                # print(cmdArray)
-                if cmdArray[-1] != "":
-                    cmdArray == cmdArray[:-1]
+            # Si el comando es CMD_SONIC -> Mostrar distancia detectada
+            elif data[0] == cmd.CMD_SONIC:
+                # print('Obstacle:' + str(data[1]) + 'cm')
+                distancias = np.append(distancias, int(data[1]))
 
-            # Numero de comandos
-            # print(len(cmdArray))
+            # Si el comando es CMD_POWER -> muestra la batería
+            elif data[0] == cmd.CMD_POWER:
+                try:
+                    power_value = []
+                    if len(data) == 3:
+                        power_value[0] = data[1]
+                        power_value[1] = data[2]
+                        # self.power_value[0] = self.restriction(round((float(data[1]) - 5.00) / 3.40 * 100),0,100)
+                        # self.power_value[1] = self.restriction(round((float(data[2]) - 7.00) / 1.40 * 100),0,100)
+                        print('Power：', power_value[0], power_value[1])
+                except Exception as e:
+                    print(e)
 
-            # Por cada comando del CMDArray
-            for oneCmd in cmdArray:
-                data = oneCmd.split("#")
-                # print(data)
+        # Si ha habido giro los n_iteraciones_cabeza primeros son de izq, luego derecha, luego recto
+        if F_Girado:
+            distancias_izquierda = distancias[:n_iteraciones_cabeza]
+            distancias_derecha = distancias[n_iteraciones_cabeza:2*n_iteraciones_cabeza]
+            distancias = distancias[2 * n_iteraciones_cabeza:]
 
-                # Si Comando vacío
-                if data == "":
-                    c.tcp_flag = False
-                    break
+            valor_distancia_izquierda = int(statistics.mode(distancias_izquierda))
+            valor_distancia_derecha = int(statistics.mode(distancias_derecha))
 
-                # Si el comando es CMD_SONIC -> Mostrar distancia detectada
-                elif data[0] == cmd.CMD_SONIC:
-                    # print('Obstacle:' + str(data[1]) + 'cm')
-                    distancias = np.append(distancias, int(data[1]))
+            print("Mediana de las distancias izq = ", valor_distancia_izquierda)
+            print("Mediana de las distancias decha = ", valor_distancia_derecha)
 
-                # Si el comando es CMD_POWER -> muestra la batería
-                elif data[0] == cmd.CMD_POWER:
-                    try:
-                        power_value = []
-                        if len(data) == 3:
-                            power_value[0] = data[1]
-                            power_value[1] = data[2]
-                            # self.power_value[0] = self.restriction(round((float(data[1]) - 5.00) / 3.40 * 100),0,100)
-                            # self.power_value[1] = self.restriction(round((float(data[2]) - 7.00) / 1.40 * 100),0,100)
-                            print('Power：', power_value[0], power_value[1])
-                    except Exception as e:
-                        print(e)
+            F_Girado = False
 
-            # Si la mediana es superior al umbral -> GIRAR
-            if len(distancias) == n_iteraciones:
-                valor_distancia = int(statistics.mode(distancias))
-                print("Mediana de las distancias = ", valor_distancia)
-                if valor_distancia >= umbral_de_distancia:
-                    # Va para atrás
-                    print("Voy para atrás")
-                    # command = cmd.CMD_MOVE + '#1#0#-10#' + str(velocidad_atras) + '#0' + '\n'
-                    # c.send_data(command)
-                    # time.sleep(3)
-                    # Gira
-                    for j in range(5):
-                        print("Giro!")
-                        # command = cmd.CMD_MOVE + '#1#0#0#' + str(velocidad_giro) + '#10' + '\n'
-                        # c.send_data(command)
-                        # time.sleep(3)
-                    # Si no, sigue caminando recto
-                else:
-                    print("Camino recto")
-                    # command = cmd.CMD_MOVE + '#1#0#35#' + str(velocidad_recto) + '#0' + '\n'
-                    # c.send_data(command)
-                    # time.sleep(3)
-            # FIN DEL BUCLE DE N_ITERACIONES
+        # Si la mediana es superior al umbral -> GIRAR
+        # if len(distancias) == n_iteraciones:
+        valor_distancia = int(statistics.mode(distancias))
+
+        print("Mediana de las distancias = ", valor_distancia)
+
+
+        if valor_distancia >= umbral_de_distancia:
+            # Va para atrás
+            # print("Voy para atrás")
+            #
+            # if movimiento:
+            #     command = cmd.CMD_MOVE + '#1#0#-10#' + str(velocidad_atras) + '#0' + '\n'
+            #     c.send_data(command)
+
+            # time.sleep(1)
+            # Gira
+            for j in range(1):
+                print("Giro!")
+
+                if movimiento:
+                    command = cmd.CMD_MOVE + '#1#0#0#' + str(velocidad_giro) + '#10' + '\n'
+                    c.send_data(command)
+                    F_Girado = True
+
+            # time.sleep(1)
+        # Si no, sigue caminando recto
+        else:
+            print("Camino recto")
+            if movimiento:
+                command = cmd.CMD_MOVE + '#1#0#35#' + str(velocidad_recto) + '#0' + '\n'
+                c.send_data(command)
+
+            # time.sleep(1)
+        # FIN DEL BUCLE DE N_ITERACIONES
 
         stop = stop_robot()
 
@@ -209,5 +281,3 @@ if __name__ == "__main__":
     time.sleep(1)
     c.turn_off_client()
     print("Conexion Finalizada")
-
-
