@@ -17,11 +17,13 @@ import statistics
 
 legs = ["one", "two", "three", "four", "five", "six"]
 
-n_iteraciones = 10
+n_iteraciones = 20
 umbral_de_distancia = 100
 umbral_distancia_lateral = 10
+
 posicion_inicial_cabeza = 50
 posicion_inicial_cabeza_lateral = 90
+
 giro_cabeza_lateral = 30
 maximo_cabeza = 50
 
@@ -31,10 +33,11 @@ velocidad_recto = 10
 
 # Flag de movimiento
 movimiento = True
+movimiento_atras = False
 
 # Flag de cabeza girada
 F_Girado = False
-n_iteraciones_cabeza = 5
+n_iteraciones_cabeza = 10
 
 girar = False
 
@@ -152,6 +155,8 @@ if __name__ == "__main__":
                 c.send_data(command)
                 time.sleep(0.3)
 
+            time.sleep(3)
+
             # Volver a la posicion inicial
             command = moveHead_initialPosition()
             c.send_data(command)
@@ -161,6 +166,8 @@ if __name__ == "__main__":
             girar_derecha = moveHead_Horizontal(posicion_inicial_cabeza_lateral + giro_cabeza_lateral)
             c.send_data(girar_derecha)
             time.sleep(0.3)
+
+            time.sleep(3)
 
             # Volver a la posicion inicial
             command = moveHead_initialPosition()
@@ -210,8 +217,9 @@ if __name__ == "__main__":
 
             # Si el comando es CMD_SONIC -> Mostrar distancia detectada
             elif data[0] == cmd.CMD_SONIC:
-                # print('Obstacle:' + str(data[1]) + 'cm')
-                distancias = np.append(distancias, int(data[1]))
+                distancia = int(data[1])
+                # print('Obstacle:' + str(distancia) + 'cm')
+                distancias = np.append(distancias, distancia)
 
             # Si el comando es CMD_POWER -> muestra la batería
             elif data[0] == cmd.CMD_POWER:
@@ -232,9 +240,9 @@ if __name__ == "__main__":
             distancias_derecha = distancias[n_iteraciones_cabeza:2 * n_iteraciones_cabeza]
             distancias = distancias[2 * n_iteraciones_cabeza:]
 
-            distancias_izquierda = distancias_izquierda[distancias_izquierda != 0]
+            # distancias_izquierda = distancias_izquierda[distancias_izquierda != 0]
 
-            distancias_derecha = distancias_derecha[distancias_derecha != 0]
+            # distancias_derecha = distancias_derecha[distancias_derecha != 0]
 
             if distancias_izquierda.size != 0:
                 valor_distancia_izquierda = int(statistics.mode(distancias_izquierda))
@@ -249,14 +257,14 @@ if __name__ == "__main__":
             print("Mediana de las distancias izq = ", valor_distancia_izquierda)
             print("Mediana de las distancias decha = ", valor_distancia_derecha)
 
-            if valor_distancia_izquierda > umbral_de_distancia : girar = True
+            if valor_distancia_izquierda > umbral_de_distancia: girar = True
             if valor_distancia_derecha > umbral_de_distancia: girar = True
 
             # if valor_distancia_izquierda == 0 and valor_distancia_derecha == 0 and valor_distancia == 0: girar = True
 
             F_Girado = False
 
-        distancias = distancias[distancias != 0]
+        # distancias = distancias[distancias != 0]
 
         # Si la mediana es superior al umbral -> GIRAR
         # if len(distancias) == n_iteraciones:
@@ -269,12 +277,13 @@ if __name__ == "__main__":
         if valor_distancia >= umbral_de_distancia: girar = True
 
         if girar:
-            # Va para atrás
-            print("Voy para atrás")
+            if movimiento_atras:
+                # Va para atrás
+                print("Voy para atrás")
 
-            if movimiento:
-                command = cmd.CMD_MOVE + '#1#0#-10#' + str(velocidad_atras) + '#0' + '\n'
-                c.send_data(command)
+                if movimiento:
+                    command = cmd.CMD_MOVE + '#1#0#-10#' + str(velocidad_atras) + '#0' + '\n'
+                    c.send_data(command)
 
             # time.sleep(1)
             # Gira
@@ -293,12 +302,13 @@ if __name__ == "__main__":
         else:
             print("Camino recto")
             if movimiento:
-                zancada = 35
+                zancada = 5
                 command = cmd.CMD_MOVE + '#1#0#' + str(zancada) + '#' + str(velocidad_recto) + '#0' + '\n'
                 c.send_data(command)
                 time.sleep(1)
         # FIN DEL BUCLE DE N_ITERACIONES
-        print("================================================================================================================================================")
+        print(
+            "================================================================================================================================================")
 
         stop = stop_robot()
 
