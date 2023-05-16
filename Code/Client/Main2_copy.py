@@ -40,7 +40,7 @@ def receive_instruction(client, ip):
 
 
 def calibrar(c):
-    for _ in range(len(legs)):
+    for i in range(len(legs)):
         command = cmd.CMD_CALIBRATION + '#' + legs[i] + '#' + str(data[i][0]) + '#' + str(data[i][1]) + '#' + str(
             str(data[i][2])) + '\n'
         c.send_data(command)
