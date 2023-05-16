@@ -19,9 +19,10 @@ legs = ["one", "two", "three", "four", "five", "six"]
 
 n_iteraciones = 10
 umbral_de_distancia = 100
+umbral_distancia_lateral = 10
 posicion_inicial_cabeza = 50
 posicion_inicial_cabeza_lateral = 90
-giro_cabeza_lateral = 40
+giro_cabeza_lateral = 30
 maximo_cabeza = 50
 
 velocidad_atras = 10
@@ -78,8 +79,11 @@ def moveHead_Horizontal(angle):
 
     return command
 
+
 def moveHead_initialPosition():
-    return cmd.CMD_HEAD + '#0#' + str(posicion_inicial_cabeza) + '\n' + cmd.CMD_HEAD + "#" + "1" + "#" + str(posicion_inicial_cabeza_lateral) + '\n'
+    return cmd.CMD_HEAD + '#0#' + str(posicion_inicial_cabeza) + '\n' + cmd.CMD_HEAD + "#" + "1" + "#" + str(
+        posicion_inicial_cabeza_lateral) + '\n'
+
 
 def moveHead_initialPosition_lateral():
     return cmd.CMD_HEAD + "#" + "1" + "#" + str(posicion_inicial_cabeza_lateral) + '\n'
@@ -139,14 +143,14 @@ if __name__ == "__main__":
         if F_Girado:
             # Girar la cabeza a la izquierda, 3 del sonar, girar cabeza a la derecha, 3 del sonar si en alguno la distancia por debajo del umbral -> girar
             # print("Girando mi cabeza a la izquierda")
-            girar_izquierda = moveHead_Horizontal(posicion_inicial_cabeza_lateral-giro_cabeza_lateral)
+            girar_izquierda = moveHead_Horizontal(posicion_inicial_cabeza_lateral - giro_cabeza_lateral)
             c.send_data(girar_izquierda)
             time.sleep(0.5)
 
             for _ in range(n_iteraciones_cabeza):
                 command = cmd.CMD_SONIC + '\n'
                 c.send_data(command)
-                time.sleep(0.5)
+                time.sleep(0.3)
 
             # Volver a la posicion inicial
             command = moveHead_initialPosition()
@@ -154,18 +158,18 @@ if __name__ == "__main__":
 
             # Giro a la derecha
             # print("Girando mi cabeza a la derecha")
-            girar_derecha = moveHead_Horizontal(posicion_inicial_cabeza_lateral+giro_cabeza_lateral)
+            girar_derecha = moveHead_Horizontal(posicion_inicial_cabeza_lateral + giro_cabeza_lateral)
             c.send_data(girar_derecha)
-            time.sleep(0.5)
+            time.sleep(0.3)
 
             # Volver a la posicion inicial
             command = moveHead_initialPosition()
             c.send_data(command)
 
-            for _ in range(n_iteraciones_cabeza):
-                command = cmd.CMD_SONIC + '\n'
-                c.send_data(command)
-                time.sleep(0.5)
+            # for _ in range(n_iteraciones_cabeza):
+            #     command = cmd.CMD_SONIC + '\n'
+            #     c.send_data(command)
+            #     time.sleep(0.3)
 
         # Comando Leer Sonar n_veces
         for i in range(n_iteraciones):
@@ -225,35 +229,52 @@ if __name__ == "__main__":
         # Si ha habido giro los n_iteraciones_cabeza primeros son de izq, luego derecha, luego recto
         if F_Girado:
             distancias_izquierda = distancias[:n_iteraciones_cabeza]
-            distancias_derecha = distancias[n_iteraciones_cabeza:2*n_iteraciones_cabeza]
+            distancias_derecha = distancias[n_iteraciones_cabeza:2 * n_iteraciones_cabeza]
             distancias = distancias[2 * n_iteraciones_cabeza:]
 
-            valor_distancia_izquierda = int(statistics.mode(distancias_izquierda))
-            valor_distancia_derecha = int(statistics.mode(distancias_derecha))
+            distancias_izquierda = distancias_izquierda[distancias_izquierda != 0]
+
+            distancias_derecha = distancias_derecha[distancias_derecha != 0]
+
+            if distancias_izquierda.size != 0:
+                valor_distancia_izquierda = int(statistics.mode(distancias_izquierda))
+            else:
+                valor_distancia_izquierda = 0
+
+            if distancias_derecha.size != 0:
+                valor_distancia_derecha = int(statistics.mode(distancias_derecha))
+            else:
+                valor_distancia_derecha = 0
 
             print("Mediana de las distancias izq = ", valor_distancia_izquierda)
             print("Mediana de las distancias decha = ", valor_distancia_derecha)
 
-            if valor_distancia_izquierda > umbral_de_distancia: girar = True
+            if valor_distancia_izquierda > umbral_de_distancia : girar = True
             if valor_distancia_derecha > umbral_de_distancia: girar = True
+
+            # if valor_distancia_izquierda == 0 and valor_distancia_derecha == 0 and valor_distancia == 0: girar = True
 
             F_Girado = False
 
+        distancias = distancias[distancias != 0]
+
         # Si la mediana es superior al umbral -> GIRAR
         # if len(distancias) == n_iteraciones:
-        valor_distancia = int(statistics.mode(distancias))
+        if distancias.size != 0:
+            valor_distancia = int(statistics.mode(distancias))
+        else:
+            valor_distancia = 0
 
         print("Mediana de las distancias = ", valor_distancia)
         if valor_distancia >= umbral_de_distancia: girar = True
 
-
         if girar:
             # Va para atrás
-            # print("Voy para atrás")
-            #
-            # if movimiento:
-            #     command = cmd.CMD_MOVE + '#1#0#-10#' + str(velocidad_atras) + '#0' + '\n'
-            #     c.send_data(command)
+            print("Voy para atrás")
+
+            if movimiento:
+                command = cmd.CMD_MOVE + '#1#0#-10#' + str(velocidad_atras) + '#0' + '\n'
+                c.send_data(command)
 
             # time.sleep(1)
             # Gira
@@ -272,11 +293,12 @@ if __name__ == "__main__":
         else:
             print("Camino recto")
             if movimiento:
-                command = cmd.CMD_MOVE + '#1#0#0#' + str(velocidad_recto) + '#0' + '\n'
+                zancada = 35
+                command = cmd.CMD_MOVE + '#1#0#' + str(zancada) + '#' + str(velocidad_recto) + '#0' + '\n'
                 c.send_data(command)
-
-            # time.sleep(1)
+                time.sleep(1)
         # FIN DEL BUCLE DE N_ITERACIONES
+        print("================================================================================================================================================")
 
         stop = stop_robot()
 
