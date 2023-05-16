@@ -26,12 +26,12 @@ import os
 def train():
     # os.system(f"python train.py --img 640 --epochs 3 --data data/data.yaml --weights yolov5s.pt")
     # os.system("python train.py --data data/data.yaml --epochs 3 --weights '' --cfg yolov5s.yaml  --batch-size -1")
-    os.system("python train.py --img 640 --batch 16 --epochs 100 --data data/data.yaml --cfg yolov5s.yaml")
+    os.system("python train.py --img 640 --batch 32 --epochs 10 --data data/data.yaml --cfg yolov5s.yaml")
 
 def test():
-    for url_img in os.listdir('C:/Users/usuario/Desktop/Hexapod_Caterpie/Dataset/imagenes'):
+    for url_img in os.listdir('C:/Users/usuario/Desktop/Hexapod_Caterpie/yolov5-master/data/test2'):
         print(url_img)
-        os.system(f'python detect.py --weights ./runs/train/exp8/weights/best.pt --source {f"C:/Users/usuario/Desktop/Hexapod_Caterpie/Dataset/imagenes/{url_img}"} --data data.yaml --exist-ok --save-txt')
+        os.system(f'python detect.py --weights ./runs/train/exp8/weights/best.pt --source {f"C:/Users/usuario/Desktop/Hexapod_Caterpie/yolov5-master/data/test2/{url_img}"} --data data.yaml --exist-ok --save-txt')
 
 if __name__ == "__main__":
     # os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
@@ -56,6 +56,6 @@ if __name__ == "__main__":
     # output = model(images[374:376])
     # print(output)
     # # Not Enough Memory
-    train()
-
+    # train()
+    test()
     # # model()
