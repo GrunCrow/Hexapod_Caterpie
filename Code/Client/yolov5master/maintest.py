@@ -28,10 +28,10 @@ def train():
     # os.system("python train.py --data data/data.yaml --epochs 3 --weights '' --cfg yolov5s.yaml  --batch-size -1")
     os.system("python train.py --img 640 --batch 32 --epochs 10 --data data/data.yaml --cfg yolov5s.yaml")
 
-def test():
+def test(ruta):
     for url_img in os.listdir('/Code/Client/yolov5master/data/test/images'):
         print(url_img)
-        os.system(f'python detect.py --weights ./runs/train/exp8/weights/best.pt --source {f"C:/Users/usuario/Desktop/Hexapod_Caterpie/yolov5master/data/test/images/{url_img}"} --data data.yaml --exist-ok --save-txt --conf-thres {0.6}')
+        os.system(f'python detect.py --weights ./runs/train/exp8/weights/best.pt --source {ruta} --data data.yaml --exist-ok --save-txt --conf-thres {0.6}')
 
 if __name__ == "__main__":
     # train()
