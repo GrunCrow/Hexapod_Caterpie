@@ -29,9 +29,9 @@ def train():
     os.system("python train.py --img 640 --batch 32 --epochs 10 --data data/data.yaml --cfg yolov5s.yaml")
 
 def test():
-    for url_img in os.listdir('C:/Users/usuario/Desktop/Hexapod_Caterpie/yolov5-master/data/test2'):
+    for url_img in os.listdir('C:/Users/usuario/Desktop/Hexapod_Caterpie/yolov5-master/data/test/images'):
         print(url_img)
-        os.system(f'python detect.py --weights ./runs/train/exp8/weights/best.pt --source {f"C:/Users/usuario/Desktop/Hexapod_Caterpie/yolov5-master/data/test2/{url_img}"} --data data.yaml --exist-ok --save-txt')
+        os.system(f'python detect.py --weights ./runs/train/exp8/weights/best.pt --source {f"C:/Users/usuario/Desktop/Hexapod_Caterpie/yolov5-master/data/test/images/{url_img}"} --data data.yaml --exist-ok --save-txt --conf-thres {0.6}')
 
 if __name__ == "__main__":
     # os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
