@@ -14,6 +14,7 @@ from PIL import Image, ImageDraw
 from Command import COMMAND as cmd
 import PIL.Image as Image
 import time
+from yolov5master import maintest
 
 def bytes_to_image(image_data):
     image_file = io.BytesIO(image_data)
@@ -85,6 +86,7 @@ class Client:
                     print("foto cogida")
                     image=bytes_to_image(jpg)
                     image.save("salida.jpg")
+
                     tiempoInicio=time.time()
                 if self.is_valid_image_4_bytes(jpg):
                     if self.video_flag:
