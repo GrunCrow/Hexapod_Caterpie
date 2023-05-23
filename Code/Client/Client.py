@@ -16,6 +16,10 @@ from Command import COMMAND as cmd
 import PIL.Image as Image
 import time
 from yolov5master import maintest
+import threading
+import sys
+sys.path.append("./yolov5master")
+from yolov5master import maintest
 
 def bytes_to_image(image_data):
     image_file = io.BytesIO(image_data)
@@ -93,19 +97,25 @@ class Client:
                     image=bytes_to_image(jpg)
                     nombre_file = "salida.jpg"
                     image.save(nombre_file)
+
+                    # Hace la deteccion de la img tomada
                     maintest.test(nombre_file)
+                    image_deteccion = "Client/yolov5master/runs/detect/exp/salida.jpg"
                     # Leer fichero de labels
-                    if os.path.isfile(r"Client\yolov5mater\runs\detect\exp\labels\salida.txt'"):
+                    if os.path.isfile(r'Client\yolov5master\runs\detect\exp\labels\salida.txt'):
                         with open(r'Client\yolov5master\runs\detect\exp\labels\salida.txt', 'r') as f:
                             if f.read(1)!="0":
-                                image.save(f"Client/yolov5master/runs/detect/Puntos/Cucarachas_{contador}")
-                                print("DETECTA CUCARACHA ",f.read(1))
+                                # Copia imagen detectada en el path de Puntos
+                                shutil.copy(image_deteccion, f"Client/yolov5master/runs/detect/Puntos/Cucarachas_{contador}.png")
+                                #image_deteccion.save(f"Client/yolov5master/runs/detect/Puntos/Cucarachas_{contador}.png")
+                                print("DETECTA CUCARACHA ", f.read(1))
                                 contador += 1
                             elif f.read(1)=="0":
                                 print("Detecta robot")
-                            else:
-                                print("No detecta nada")
                         f.close()
+                    else:
+                        print("No detecta nada")
+
                     tiempoInicio=time.time()
 
 
@@ -119,8 +129,9 @@ class Client:
                         cv2.imshow('VideoHexapod2',self.image)
 
             except BaseException as e:
-                print (e)
+                print(e)
                 break
+
             cv2.waitKey(1)
         cv2.destroyAllWindows()
         cv2.waitKey(0)

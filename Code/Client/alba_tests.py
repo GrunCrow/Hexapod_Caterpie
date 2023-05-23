@@ -34,15 +34,17 @@ velocidad_giro = 10
 velocidad_recto = 10
 
 # Flag de movimiento
-movimiento = False
+movimiento = True
 movimiento_atras = False
 
 # Flag de cabeza girada
 F_Girado = False
 n_iteraciones_cabeza = 10
 
+num_giros = 1
 girar = False
 
+rrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr
 
 def comprobar_cabeza(posicion_cabeza):
     return posicion_cabeza <= maximo_cabeza
@@ -54,7 +56,7 @@ def receive_instruction(client, ip):
         client.tcp_flag = True
         print("Connecttion Successful !")
     except Exception as e:
-        print("Connect to server Faild!: Server IP is right? Server is opend?")
+        print("Connect to server Failed!: Server IP is right? Server is opend?")
         client.tcp_flag = False
 
 
@@ -161,11 +163,12 @@ if __name__ == "__main__":
                 c.send_data(command)
                 time.sleep(0.3)
 
-            time.sleep(3)
+            # time.sleep(3)
 
             # Volver a la posicion inicial
             command = moveHead_initialPosition()
             c.send_data(command)
+            time.sleep(0.3)
 
             # Giro a la derecha
             # print("Girando mi cabeza a la derecha")
@@ -173,12 +176,12 @@ if __name__ == "__main__":
             c.send_data(girar_derecha)
             time.sleep(0.3)
 
-            time.sleep(3)
+
 
             # Volver a la posicion inicial
             command = moveHead_initialPosition()
             c.send_data(command)
-
+            time.sleep(0.3)
             # for _ in range(n_iteraciones_cabeza):
             #     command = cmd.CMD_SONIC + '\n'
             #     c.send_data(command)
@@ -279,7 +282,10 @@ if __name__ == "__main__":
         else:
             valor_distancia = 0
 
-        print("Mediana de las distancias = ", valor_distancia)
+        if valor_distancia == 0:
+            girar = True
+
+        print("Mediana de las distancias = ", valor_distancia, " (girar: ", girar, ")")
         if valor_distancia >= umbral_de_distancia: girar = True
 
         if girar:
@@ -290,15 +296,17 @@ if __name__ == "__main__":
                 if movimiento:
                     command = cmd.CMD_MOVE + '#1#0#-10#' + str(velocidad_atras) + '#0' + '\n'
                     c.send_data(command)
+                    time.sleep(1)
 
             # time.sleep(1)
             # Gira
-            for j in range(1):
+            for j in range(num_giros):
                 print("Giro!")
 
                 if movimiento:
                     command = cmd.CMD_MOVE + '#1#0#0#' + str(velocidad_giro) + '#10' + '\n'
                     c.send_data(command)
+                    time.sleep(1)
 
             F_Girado = True
             girar = False
