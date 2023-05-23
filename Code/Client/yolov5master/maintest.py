@@ -29,10 +29,11 @@ def train():
     os.system("python train.py --img 640 --batch 32 --epochs 10 --data data/data.yaml --cfg yolov5s.yaml")
 
 def test(ruta):
-    for url_img in os.listdir('/Code/Client/yolov5master/data/test/images'):
-        print(url_img)
-        os.system(f'python detect.py --weights ./runs/train/exp8/weights/best.pt --source {ruta} --data data.yaml --exist-ok --save-txt --conf-thres {0.6}')
+    # for url_img in os.listdir('/Code/Client/yolov5master/data/test/images'):
+    ruta_acceder = ruta
+    print(os.path.abspath(ruta_acceder))
+    os.system(f'python yolov5master/detect.py --weights ./runs/train/exp8/weights/best.pt --source {ruta_acceder} --data data.yaml --exist-ok --save-txt --conf-thres {0.6}')
 
 if __name__ == "__main__":
     # train()
-    test()
+    print()

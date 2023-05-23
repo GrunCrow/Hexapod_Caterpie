@@ -85,8 +85,9 @@ class Client:
                 if tiempoFinal-tiempoInicio>5:
                     print("foto cogida")
                     image=bytes_to_image(jpg)
-                    image.save("salida.jpg")
-
+                    nombre_file = "salida.jpg"
+                    image.save(nombre_file)
+                    maintest.test(nombre_file)
                     tiempoInicio=time.time()
                 if self.is_valid_image_4_bytes(jpg):
                     if self.video_flag:
