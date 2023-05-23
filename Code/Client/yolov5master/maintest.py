@@ -26,14 +26,20 @@ import os
 def train():
     # os.system(f"python train.py --img 640 --epochs 3 --data data/data.yaml --weights yolov5s.pt")
     # os.system("python train.py --data data/data.yaml --epochs 3 --weights '' --cfg yolov5s.yaml  --batch-size -1")
-    os.system("python train.py --img 640 --batch -1 --epochs 10 --data data/data.yaml --cfg yolov5s.yaml --optimizer Adam -- evolve")
+    os.system("python train.py --img 640 --batch -1 --epochs 69 --data data/data.yaml --cfg yolov5s.yaml --optimizer Adam")
 
 def test(ruta):
     # for url_img in os.listdir('/Code/Client/yolov5master/data/test/images'):
     ruta_acceder = ruta
     print(os.path.abspath(ruta_acceder))
-    os.system(f'python yolov5master/detect.py --weights ./runs/train/exp8/weights/best.pt --source {ruta_acceder} --data data.yaml --exist-ok --save-txt --conf-thres {0.6}')
+    os.system(f'python yolov5master/detect.py --weights ./runs/train/exp3/weights/best.pt --source {ruta_acceder} --data data.yaml --exist-ok --save-txt')
+
+def test_directorio():
+    for url_img in os.listdir('C:/Users/usuario/Desktop/Hexapod_Caterpie/Code/Client/yolov5master/data/test/images/'):
+        os.system(f'python detect.py --weights ./runs/train/exp3/weights/best.pt --source {"C:/Users/usuario/Desktop/Hexapod_Caterpie/Code/Client/yolov5master/data/test/images/"+url_img} --data data.yaml --exist-ok --save-txt --conf-thres {0.6}')
+
 
 if __name__ == "__main__":
-    train()
+    test_directorio()
+    # train()
     # print()

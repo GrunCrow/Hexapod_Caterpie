@@ -11,7 +11,8 @@ TARGET_HEIGHT_IMG = int(HEIGHT_IMG / PROPORCION)
 
 
 # ===================================================== CLASES =====================================================
-CLASSES = ['1_NanoBug_Azul',
+CLASSES = ['0_Hexapod'
+            '1_NanoBug_Azul',
            '2_NanoBug_Negro',
            '3_NanoBug_Celeste',
            '4_NanoBug_Blanco',

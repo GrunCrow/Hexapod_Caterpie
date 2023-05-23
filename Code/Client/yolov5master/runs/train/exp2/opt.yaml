@@ -1,5 +1,5 @@
 weights: yolov5s.pt
-cfg: C:\Users\usuario\Desktop\Hexapod_Caterpie\yolov5-master\models\yolov5s.yaml
+cfg: C:\Users\usuario\Desktop\Hexapod_Caterpie\Code\Client\yolov5master\models\yolov5s.yaml
 data: data/data.yaml
 hyp:
   lr0: 0.01
@@ -30,8 +30,8 @@ hyp:
   mosaic: 1.0
   mixup: 0.0
   copy_paste: 0.0
-epochs: 3
-batch_size: 16
+epochs: 20
+batch_size: -1
 imgsz: 640
 rect: false
 resume: false
@@ -46,7 +46,7 @@ image_weights: false
 device: ''
 multi_scale: false
 single_cls: false
-optimizer: SGD
+optimizer: Adam
 sync_bn: false
 workers: 8
 project: runs\train
