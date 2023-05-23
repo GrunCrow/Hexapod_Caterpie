@@ -16941,3 +16941,5 @@ venv/Lib/site-packages/opencv_python-4.7.0.72.dist-info/top_level.txt
 venv/Lib/site-packages/opencv_python-4.7.0.72.dist-info/WHEEL
 venv/Lib/site-packages/pip/_internal/commands/__pycache__/uninstall.cpython-38.pyc
 venv/Lib/site-packages/PyQt5/__pycache__/__init__.cpython-38.pyc
+*.pyd
+*.pyd
