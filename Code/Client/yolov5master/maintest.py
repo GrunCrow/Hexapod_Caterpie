@@ -26,14 +26,15 @@ import os
 def train():
     # os.system(f"python train.py --img 640 --epochs 3 --data data/data.yaml --weights yolov5s.pt")
     # os.system("python train.py --data data/data.yaml --epochs 3 --weights '' --cfg yolov5s.yaml  --batch-size -1")
-    os.system("python train.py --img 640 --batch -1 --epochs 10 --data data/data.yaml --cfg yolov5s.yaml --optimizer Adam -- evolve")
+    os.system("python train.py --img 640 --batch -1 --epochs 20 --data data/data.yaml --cfg yolov5s.yaml --optimizer Adam")
 
 def test(ruta):
     # for url_img in os.listdir('/Code/Client/yolov5master/data/test/images'):
     ruta_acceder = ruta
-    print(os.path.abspath(ruta_acceder))
-    os.system(f'python yolov5master/detect.py --weights ./runs/train/exp8/weights/best.pt --source {ruta_acceder} --data data.yaml --exist-ok --save-txt --conf-thres {0.6}')
+    print(ruta, os.path.abspath(ruta_acceder))
+    os.system(f'python Client/yolov5master/detect.py --weights Client/yolov5master/runs/train/exp11/weights/best.pt --source {ruta_acceder} --data data.yaml --exist-ok --save-txt')
 
 if __name__ == "__main__":
-    train()
-    # print()
+    #train()
+    #test(r"C:\Users\usuario\Documents\GitHub\Hexapod_Caterpie\Code\Client\yolov5master\data\test\images\0_Hexapod_266_jpg.rf.9168c337923922fce12abf7cec2a0aa2.jpg")
+    print()

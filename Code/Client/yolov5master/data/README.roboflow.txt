@@ -1,8 +1,8 @@
 
-NanoBug_Dataset - v1 2023-04-25 4:25pm
+NanoBug_Dataset - v2 2023-05-23 5:55pm
 ==============================
 
-This dataset was exported via roboflow.com on April 25, 2023 at 2:27 PM GMT
+This dataset was exported via roboflow.com on May 23, 2023 at 3:57 PM GMT
 
 Roboflow is an end-to-end computer vision platform that helps you
 * collaborate with your team on computer vision projects
@@ -17,7 +17,7 @@ visit https://github.com/roboflow/notebooks
 
 To find over 100k other datasets and pre-trained models, visit https://universe.roboflow.com
 
-The dataset includes 2037 images.
+The dataset includes 2400 images.
 Robot are annotated in YOLO v5 PyTorch format.
 
 The following pre-processing was applied to each image:
@@ -27,7 +27,8 @@ The following pre-processing was applied to each image:
 The following augmentation was applied to create 3 versions of each source image:
 * 50% probability of horizontal flip
 * Random rotation of between -19 and +19 degrees
-* Random exposure adjustment of between -9 and +9 percent
+* Random shear of between -21° to +21° horizontally and -10° to +10° vertically
+* Random brigthness adjustment of between -25 and +25 percent
 * Random Gaussian blur of between 0 and 2.25 pixels
 
 

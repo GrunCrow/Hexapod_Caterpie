@@ -2,6 +2,7 @@
 import io
 import math
 import copy
+import shutil
 import socket
 import struct
 import threading
@@ -36,7 +37,6 @@ def draw_red_square(image):
 
 class Client:
     def __init__(self):
-        self.face=Face()
         self.pid=Incremental_PID(1,0,0.0025)
         self.tcp_flag=False
         self.video_flag=True
@@ -75,6 +75,10 @@ class Client:
             #print ("command port connect failed")
             pass
         tiempoInicio=time.time()
+
+        if os.path.exists("Client/yolov5master/runs/detect/exp"):
+            shutil.rmtree("Client/yolov5master/runs/detect/exp")
+        contador=0
         while True:
 
             try:
@@ -83,12 +87,28 @@ class Client:
                 leng=struct.unpack('<L', stream_bytes[:4])
                 jpg=self.connection.read(leng[0])
                 if tiempoFinal-tiempoInicio>5:
+                    if os.path.exists("Client/yolov5master/runs/detect/exp"):
+                        shutil.rmtree("Client/yolov5master/runs/detect/exp")
                     print("foto cogida")
                     image=bytes_to_image(jpg)
                     nombre_file = "salida.jpg"
                     image.save(nombre_file)
                     maintest.test(nombre_file)
+                    # Leer fichero de labels
+                    if os.path.isfile(r"Client\yolov5mater\runs\detect\exp\labels\salida.txt'"):
+                        with open(r'Client\yolov5master\runs\detect\exp\labels\salida.txt', 'r') as f:
+                            if f.read(1)!="0":
+                                image.save(f"Client/yolov5master/runs/detect/Puntos/Cucarachas_{contador}")
+                                print("DETECTA CUCARACHA ",f.read(1))
+                                contador += 1
+                            elif f.read(1)=="0":
+                                print("Detecta robot")
+                            else:
+                                print("No detecta nada")
+                        f.close()
                     tiempoInicio=time.time()
+
+
                 if self.is_valid_image_4_bytes(jpg):
                     if self.video_flag:
                         self.image = cv2.imdecode(np.frombuffer(jpg, dtype=np.uint8), cv2.IMREAD_COLOR)

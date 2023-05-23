@@ -1,3 +1,5 @@
+import os
+import shutil
 import sys
 import math
 import time
@@ -32,7 +34,7 @@ velocidad_giro = 10
 velocidad_recto = 10
 
 # Flag de movimiento
-movimiento = True
+movimiento = False
 movimiento_atras = False
 
 # Flag de cabeza girada
@@ -94,7 +96,7 @@ def moveHead_initialPosition_lateral():
 
 if __name__ == "__main__":
 
-    fichero = open("point.txt")
+    fichero = open("./Client/point.txt")
     linea = fichero.readline()
     data = []
     while linea != '':
@@ -136,6 +138,10 @@ if __name__ == "__main__":
     c.send_data(command)
     time.sleep(2)
     stop = False
+
+    if os.path.exists("Client/yolov5master/runs/detect/Puntos"):
+        shutil.rmtree("Client/yolov5master/runs/detect/Puntos")
+        os.makedirs("Client/yolov5master/runs/detect/Puntos")
 
     while not stop:
         # LEER SONAR

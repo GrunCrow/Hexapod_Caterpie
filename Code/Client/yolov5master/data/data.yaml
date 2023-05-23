@@ -2,12 +2,12 @@ train: ./data/train/images
 val: ./data/valid/images
 test: ./data/test/images
 
-nc: 7
-names: ['1_NanoBug_Azul', '2_NanoBug_Negro', '3_NanoBug_Celeste', '4_NanoBug_Blanco', '5_NanoBug_GrisClaro', '6_NanoBug_GrisOscuro', '7_NanoBug_Naranja']
+nc: 8
+names: ['0_Hexapod', '1_NanoBug_Azul', '2_NanoBug_Negro', '3_NanoBug_Celeste', '4_NanoBug_Blanco', '5_NanoBug_GrisClaro', '6_NanoBug_GrisOscuro', '7_NanoBug_Naranja']
 
 roboflow:
   workspace: university-of-huelva
   project: nanobug_dataset
-  version: 1
+  version: 2
   license: CC BY 4.0
-  url: https://universe.roboflow.com/university-of-huelva/nanobug_dataset/dataset/1
+  url: https://universe.roboflow.com/university-of-huelva/nanobug_dataset/dataset/2
