@@ -20,14 +20,14 @@ CLASSES = ['0_Hexapod'
            '6_NanoBug_GrisOscuro',
            '7_NanoBug_Naranja']
 
-NUM_CUCAS = {0: '0_Hexapod',
-             1: '1_NanoBug_Azul',
-             2: '2_NanoBug_GrisOscuro',
-             3: '3_NanoBug_Celeste',
-             4: '4_NanoBug_Negro',
-             5: '5_NanoBug_Blanco',
-             6: '6_NanoBug_GrisClaro',
-             7: '7_NanoBug_Naranja'}
+NUM_CUCAS = {'0_Hexapod': 0,
+            '1_NanoBug_Azul': 1,
+           '2_NanoBug_Negro': 4,
+           '3_NanoBug_Celeste': 3,
+           '4_NanoBug_Blanco': 5,
+           '5_NanoBug_GrisClaro': 6,
+           '6_NanoBug_GrisOscuro': 2,
+           '7_NanoBug_Naranja': 7}
 
 CLASS_NUMBER = len(CLASSES)
 

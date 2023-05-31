@@ -38,7 +38,7 @@ velocidad_recto = 10
 zancada = 5
 
 # Flag de movimiento
-movimiento = False
+movimiento = True
 movimiento_atras = False
 
 # Flag de cabeza girada
@@ -47,7 +47,6 @@ n_iteraciones_cabeza = 10
 
 num_giros = 1
 girar = False
-
 
 
 def comprobar_cabeza(posicion_cabeza):
@@ -100,10 +99,7 @@ def moveHead_initialPosition_lateral():
     return cmd.CMD_HEAD + "#" + "1" + "#" + str(posicion_inicial_cabeza_lateral) + '\n'
 
 
-
-
-if __name__ == "__main__":
-    model = torch.hub.load('ultralytics/yolov5', 'custom', path=r'C:\Users\usuario\Documents\GitHub\Hexapod_Caterpie\Code\Client\yolov5master\runs\train\exp11\weights\best.pt')  # local model
+def encender_robot():
     fichero = open(r"C:\Users\usuario\Documents\GitHub\Hexapod_Caterpie\Code\Client\point.txt")
     linea = fichero.readline()
     data = []
@@ -115,7 +111,60 @@ if __name__ == "__main__":
     c.tcp_flag = True
     receive_instruction(c, "192.168.50.100")
     calibrar(c, data)
-    videoThread = threading.Thread(target=c.receiving_video, args=("192.168.50.100",model,))
+
+    return c
+
+
+# if __name__ == "__main__":
+
+def script_robot(c, o):
+    legs = ["one", "two", "three", "four", "five", "six"]
+
+    n_iteraciones = 20
+    umbral_de_distancia = 100
+    umbral_distancia_lateral = 10
+
+    posicion_inicial_cabeza = 50
+    posicion_inicial_cabeza_lateral = 90
+
+    giro_cabeza_lateral = 30
+    maximo_cabeza = 50
+
+    velocidad_atras = 10
+    velocidad_giro = 10
+    velocidad_recto = 10
+
+    zancada = 5
+
+    # Flag de movimiento
+    movimiento = True
+    movimiento_atras = False
+
+    # Flag de cabeza girada
+    F_Girado = False
+    n_iteraciones_cabeza = 10
+
+    num_giros = 1
+    girar = False
+
+    model = torch.hub.load('ultralytics/yolov5', 'custom',
+                           path=r'C:\Users\usuario\Documents\GitHub\Hexapod_Caterpie\Code\Client\yolov5master\runs\train\exp11\weights\best.pt')  # local model
+    input()
+    # fichero = open(r"C:\Users\usuario\Documents\GitHub\Hexapod_Caterpie\Code\Client\point.txt")
+    # linea = fichero.readline()
+    # data = []
+    # while linea != '':
+    #     data.append(linea.split('\t'))
+    #     linea = fichero.readline()
+    # c = Client()
+    # c.turn_on_client("192.168.50.100")
+    # c.tcp_flag = True
+    # receive_instruction(c, "192.168.50.100")
+    # calibrar(c, data)
+
+    # c = encender_robot()
+
+    videoThread = threading.Thread(target=c.receiving_video, args=("192.168.50.100", model, o,))
     videoThread.start()
 
     """
@@ -184,8 +233,6 @@ if __name__ == "__main__":
             girar_derecha = moveHead_Horizontal(posicion_inicial_cabeza_lateral + giro_cabeza_lateral)
             c.send_data(girar_derecha)
             time.sleep(0.3)
-
-
 
             # Volver a la posicion inicial
             command = moveHead_initialPosition()
@@ -359,3 +406,11 @@ if __name__ == "__main__":
     time.sleep(1)
     c.turn_off_client()
     print("Conexion Finalizada")
+
+
+
+if __name__ == "__main__":
+
+    c = encender_robot()
+    script_robot(c)
+

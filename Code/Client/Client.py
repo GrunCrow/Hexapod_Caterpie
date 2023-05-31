@@ -21,6 +21,8 @@ import sys
 sys.path.append("./yolov5master")
 from yolov5master import maintest
 
+from constantes import NUM_CUCAS
+
 def bytes_to_image(image_data):
     image_file = io.BytesIO(image_data)
     image = Image.open(image_file)
@@ -68,11 +70,14 @@ class Client:
             except:
                 bValid = False
         return bValid
-    def receiving_video(self,ip,model):
+    def receiving_video(self, ip, model, o):
+        numero_robot = 2
+        capturar = True
+
         try:
             self.client_socket.connect((ip, 8002))
             self.connection = self.client_socket.makefile('rb')
-            contador=0
+            contador = 0
         except:
             #print ("command port connect failed")
             pass
@@ -101,7 +106,74 @@ class Client:
                 print(time.time() - timeRedAntes)
                 # image_deteccion = "Client/yolov5master/runs/detect/exp/salida.jpg"
                 detect=model(image)
-                print(detect)
+
+
+                print("\n\n==========================================================================================================================================================\n")
+
+                if "(no detections)" not in str(detect):
+
+                    str_detect = str(detect).split("\n")[0].split(" 300x400 ")[1]
+                    current_detect = str_detect
+
+                    contador_detectadas = 0
+                    num_detectadas = 0
+                    if "," in current_detect:
+                        str_detect_array = str_detect.split(",")
+                        num_detectadas = len(str_detect_array)
+                        current_detect = str_detect_array[contador_detectadas]
+                        contador_detectadas += 1
+
+                    current_detect_number = current_detect.split(" ")[0]
+                    current_detect = current_detect.split(" ")[1]
+                    if int(current_detect_number) > 1:
+                        current_detect = current_detect[:-1]
+
+                    print(current_detect)
+
+                    n_nanobug = NUM_CUCAS[current_detect] - 1
+
+                    print(n_nanobug)
+
+                    persecucion = o.cuca_perseguida(numero_robot, n_nanobug)
+                    time.sleep(3)
+
+                    while not persecucion and num_detectadas < contador_detectadas:
+
+                        current_detect = str_detect_array[contador_detectadas]
+                        contador_detectadas += 1
+
+                        current_detect = current_detect.split(" ")[1]
+
+                        print(current_detect)
+
+                        n_nanobug = NUM_CUCAS[current_detect] - 1
+
+                        print(n_nanobug)
+
+                        persecucion = o.cuca_perseguida(numero_robot, n_nanobug)
+
+                        time.sleep(3)
+
+                    if persecucion:
+                        print("Persecucion valida")
+                        capturar = True
+                        imagenRed = np.squeeze(detect.render())
+                        imagenGuardar=Image.fromarray(imagenRed)
+                        imagenGuardar.save(f"Cucarachas_{contador}.jpg")
+                        print("Imagen guardada")
+                        contador+=1
+                        o.libera_cuca(numero_robot, n_nanobug)
+                        time.sleep(5)
+                    elif not persecucion:
+                        print("Persecucion NO valida")
+                        capturar = False
+
+                    print("\n\n==========================================================================================================================================================\n")
+
+                    # image 1 / 1: 300x400 1 2_NanoBug_Negro, 1 7_NanoBug_Naranja\n
+                    # Speed: 3.0 ms pre - process, 68.0 ms inference, 5.0 ms NMS per image at shape(1, 3, 480, 640)
+
+                    print("\n=======================================================================================================================================================\n")
 
 
                 # # Leer fichero de labels
