@@ -1,8 +1,15 @@
 
+<<<<<<< HEAD
 NanoBug_Dataset - v2 2023-05-23 5:55pm
 ==============================
 
 This dataset was exported via roboflow.com on May 23, 2023 at 3:57 PM GMT
+=======
+NanoBug_Dataset - v4 2023-05-23 8:21pm
+==============================
+
+This dataset was exported via roboflow.com on May 23, 2023 at 6:21 PM GMT
+>>>>>>> 2eae211e76395baac8eaefa6a5f0fae5c9a585ce
 
 Roboflow is an end-to-end computer vision platform that helps you
 * collaborate with your team on computer vision projects
@@ -17,7 +24,11 @@ visit https://github.com/roboflow/notebooks
 
 To find over 100k other datasets and pre-trained models, visit https://universe.roboflow.com
 
+<<<<<<< HEAD
 The dataset includes 2400 images.
+=======
+The dataset includes 2260 images.
+>>>>>>> 2eae211e76395baac8eaefa6a5f0fae5c9a585ce
 Robot are annotated in YOLO v5 PyTorch format.
 
 The following pre-processing was applied to each image:

@@ -8,6 +8,12 @@ names: ['0_Hexapod', '1_NanoBug_Azul', '2_NanoBug_Negro', '3_NanoBug_Celeste', '
 roboflow:
   workspace: university-of-huelva
   project: nanobug_dataset
+<<<<<<< HEAD
   version: 2
   license: CC BY 4.0
   url: https://universe.roboflow.com/university-of-huelva/nanobug_dataset/dataset/2
+=======
+  version: 4
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/university-of-huelva/nanobug_dataset/dataset/4
+>>>>>>> 2eae211e76395baac8eaefa6a5f0fae5c9a585ce

@@ -26,17 +26,15 @@ def bytes_to_image(image_data):
     image = Image.open(image_file)
     return image
 
-def draw_red_square(image):
+
+def draw_red_circle(image):
     height, width, _ = image.shape
-    center_x, center_y = width // 2, height // 2
-    square_size = 20  # Tamaño del cuadrado en píxeles
-    half_size = square_size // 2
-    top_left = (center_x - half_size, center_y - half_size)
-    bottom_right = (center_x + half_size, center_y + half_size)
+    center = (width // 2, height // 2)
+    radius = 5  # Radio del círculo en píxeles
     color = (0, 0, 255)  # Color en formato BGR (rojo)
-    thickness = 2  # Grosor del cuadrado
-    image_with_square = cv2.rectangle(image, top_left, bottom_right, color, thickness)
-    return image_with_square
+    thickness = 2  # Grosor del círculo
+    image_with_circle = cv2.circle(image, center, radius, color, thickness)
+    return image_with_circle
 
 
 class Client:
@@ -70,7 +68,7 @@ class Client:
             except:
                 bValid = False
         return bValid
-    def receiving_video(self,ip):
+    def receiving_video(self,ip,model):
         try:
             self.client_socket.connect((ip, 8002))
             self.connection = self.client_socket.makefile('rb')
@@ -84,39 +82,46 @@ class Client:
             shutil.rmtree("Client/yolov5master/runs/detect/exp")
         contador=0
         while True:
-
             try:
                 tiempoFinal = time.time()
                 stream_bytes= self.connection.read(4)
                 leng=struct.unpack('<L', stream_bytes[:4])
                 jpg=self.connection.read(leng[0])
-                if tiempoFinal-tiempoInicio>5:
-                    if os.path.exists("Client/yolov5master/runs/detect/exp"):
-                        shutil.rmtree("Client/yolov5master/runs/detect/exp")
-                    print("foto cogida")
-                    image=bytes_to_image(jpg)
-                    nombre_file = "salida.jpg"
-                    image.save(nombre_file)
 
-                    # Hace la deteccion de la img tomada
-                    maintest.test(nombre_file)
-                    image_deteccion = "Client/yolov5master/runs/detect/exp/salida.jpg"
-                    # Leer fichero de labels
-                    if os.path.isfile(r'Client\yolov5master\runs\detect\exp\labels\salida.txt'):
-                        with open(r'Client\yolov5master\runs\detect\exp\labels\salida.txt', 'r') as f:
-                            if f.read(1)!="0":
-                                # Copia imagen detectada en el path de Puntos
-                                shutil.copy(image_deteccion, f"Client/yolov5master/runs/detect/Puntos/Cucarachas_{contador}.png")
-                                #image_deteccion.save(f"Client/yolov5master/runs/detect/Puntos/Cucarachas_{contador}.png")
-                                print("DETECTA CUCARACHA ", f.read(1))
-                                contador += 1
-                            elif f.read(1)=="0":
-                                print("Detecta robot")
-                        f.close()
-                    else:
-                        print("No detecta nada")
+                if os.path.exists("Client/yolov5master/runs/detect/exp"):
+                    shutil.rmtree("Client/yolov5master/runs/detect/exp")
+                print("foto cogida")
+                image=bytes_to_image(jpg)
+                nombre_file = "salida.jpg"
+                image.save(nombre_file)
 
-                    tiempoInicio=time.time()
+                # Hace la deteccion de la img tomada
+                timeRedAntes = time.time()
+                maintest.test(nombre_file)
+                print(time.time() - timeRedAntes)
+                # image_deteccion = "Client/yolov5master/runs/detect/exp/salida.jpg"
+                detect=model(image)
+                print(detect)
+
+
+                # # Leer fichero de labels
+                # if os.path.isfile(r'Client\yolov5master\runs\detect\exp\labels\salida.txt'):
+                #     with open(r'Client\yolov5master\runs\detect\exp\labels\salida.txt', 'r') as f:
+                #         if f.read(1)!="0":
+                #
+                #             # Copia imagen detectada en el path de Puntos
+                #             # shutil.copy(image_deteccion, f"Client/yolov5master/runs/detect/Puntos/Cucarachas_{contador}.png")
+                #             #image_deteccion.save(f"Client/yolov5master/runs/detect/Puntos/Cucarachas_{contador}.png")
+                #             print("DETECTA CUCARACHA ", f.read(1))
+                #             contador += 1
+                #
+                #         elif f.read(1)=="0":
+                #             print("Detecta robot")
+                #     f.close()
+                # else:
+                #     print("No detecta nada")
+
+                tiempoInicio=time.time()
 
 
                 if self.is_valid_image_4_bytes(jpg):
@@ -125,8 +130,9 @@ class Client:
                         if self.fece_id == False and self.fece_recognition_flag:
                             self.face.face_detect(self.image)
                         #self.video_flag=False
-                        self.image=draw_red_square(self.image)
-                        cv2.imshow('VideoHexapod2',self.image)
+                        self.image=draw_red_circle(self.image)
+                        imagenRed=np.squeeze(detect.render())
+                        cv2.imshow('VideoHexapod2',cv2.cvtColor(imagenRed,cv2.COLOR_BGR2RGB))
 
             except BaseException as e:
                 print(e)
